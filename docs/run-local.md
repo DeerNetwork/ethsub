@@ -10,12 +10,9 @@ just run-sub
 ```sh
 export CONTRACT_BRIDGE='0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B'
 export CONTRACT_ERC20_HANDLER='0x3167776db165D8eA0f51790CA2bbf44Db5105ADF'
-export CONTRACT_ERC721_HANDLER='0x3f709398808af36ADBA86ACC617FeB7F5B7B193E'
 export CONTRACT_GENERIC_HANDLER='0x2B6Ab4b880A45a07d83Cf4d664Df4Ab85705Bc07'
 export CONTRACT_ERC20='0x21605f71845f372A9ed84253d2D024B7B10999f4'
-export CONTRACT_ERC721='0xd7E33e1bbf65dC001A0Eb1552613106CD7e40C31'
 export RESOURCE_ID_ERC20='0x000000000000000000000000000000c76ebe4a02bbc34786d860b355f5a5ce00'
-export RESOURCE_ID_ERC721='0x000000000000000000000000000000e389d61c11e5fe32ec1735b3cd38c69501'
 ```
 
 ## Setup eth chain
@@ -25,15 +22,9 @@ cb-sol-cli deploy --all --relayerThreshold 1
 
 cb-sol-cli bridge register-resource --resourceId $RESOURCE_ID_ERC20 --targetContract $CONTRACT_ERC20
 
-cb-sol-cli bridge register-resource --resourceId $RESOURCE_ID_ERC721 --targetContract $CONTRACT_ERC721 --handler $CONTRACT_ERC721_HANDLER
-
 cb-sol-cli bridge set-burn --tokenContract $CONTRACT_ERC20
 
 cb-sol-cli erc20 add-minter --minter $CONTRACT_ERC20_HANDLER
-
-cb-sol-cli bridge set-burn --tokenContract $CONTRACT_ERC721 --handler $CONTRACT_ERC721_HANDLER
-
-cb-sol-cli erc721 add-minter --minter $CONTRACT_ERC721_HANDLER
 ```
 
 ## Setup sub chain
@@ -41,7 +32,6 @@ cb-sol-cli erc721 add-minter --minter $CONTRACT_ERC721_HANDLER
 ```sh
 sudo.call chainBridge.addRelayer Alice
 sudo.call chainBridge.setResource $RESOURCE_ID_ERC20 0x4578616d706c652e7472616e73666572
-sudo.call chainBridge.setResource $RESOURCE_ID_ERC721 0x4578616d706c652e6d696e745f657263373231
 sudo.call chainBridge.whitelistChain 0
 ```
 

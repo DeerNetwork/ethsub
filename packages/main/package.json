@@ -1,0 +1,14 @@
+{
+  "name": "ethsub",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run -s clean && npm run -s build"
+  },
+  "dependencies": {
+    "ethers": "^5.5.1",
+    "winston": "^3.3.3"
+  }
+}

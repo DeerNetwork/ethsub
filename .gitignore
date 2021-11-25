@@ -1,8 +1,7 @@
 node_modules
+build
 dist
 *.log
-package-lock.json
 .vscode
-/solidity
-/cb-sol-cli
-/config.json
+/packages/main/config.json
+/sol

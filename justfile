@@ -1,5 +1,7 @@
-run:
-    ts-node src/index.ts
+compile-sol:
+    rm -rf packages/solidity/build
+    pnpm run --filter ./packages/solidity compile
+
 run-eth:
     ganache-cli \
         -b 3 \

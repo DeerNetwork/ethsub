@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import fs from "fs/promise";
 import Eth from "./eth";
 
 async function main() {
