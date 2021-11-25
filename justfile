@@ -12,6 +12,9 @@ typegen-sol:
 sol *args:
     -node packages/sol-cli/index.js {{args}}
 
+run-main:
+    pnpm run --filter ./packages/main dev
+
 run-eth:
     ganache-cli \
         -b 3 \

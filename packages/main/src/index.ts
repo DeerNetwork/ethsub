@@ -1,8 +1,9 @@
-import fs from "fs/promise";
+import path from "path";
 import Eth from "./eth";
+import { loadJsonValue } from "./utils";
 
 async function main() {
-  const config = JSON.parse(await fs.readFile("../config.json", "utf-8"));
+  const config = await loadJsonValue(path.resolve(__dirname, "../config.json"));
   const eth = await Eth.init(config.eth);
   await eth.listen();
 }

@@ -5,6 +5,7 @@ importers:
   .:
     specifiers:
       '@typechain/ethers-v5': ^8.0.4
+      '@types/node': ^16.11.10
       '@typescript-eslint/eslint-plugin': ^5.4.0
       '@typescript-eslint/parser': ^5.4.0
       eslint: ^8.3.0
@@ -13,11 +14,13 @@ importers:
       prettier: ^2.4.1
       rimraf: ^3.0.2
       truffle: ^5.4.22
+      ts-node: ^10.4.0
       typechain: ^6.0.4
       typescript: ^4.5.2
     dependencies:
       '@typechain/ethers-v5': 8.0.4_typechain@6.0.4+typescript@4.5.2
     devDependencies:
+      '@types/node': 16.11.10
       '@typescript-eslint/eslint-plugin': 5.4.0_5c8ff4cecd5a55e744866c0654edac32
       '@typescript-eslint/parser': 5.4.0_eslint@8.3.0+typescript@4.5.2
       eslint: 8.3.0
@@ -25,7 +28,8 @@ importers:
       eslint-plugin-prettier: 4.0.0_d8c6a2a4ba8850181fffb74d8e835cec
       prettier: 2.5.0
       rimraf: 3.0.2
-      truffle: 5.4.22
+      truffle: 5.4.22_@types+node@16.11.10
+      ts-node: 10.4.0_36929cccfdb926da0bb85cc291f27124
       typechain: 6.0.4_typescript@4.5.2
       typescript: 4.5.2
 
@@ -797,6 +801,18 @@ packages:
     dev: true
     optional: true
 
+  /@cspotcode/source-map-consumer/0.8.0:
+    resolution: {integrity: sha512-41qniHzTU8yAGbCp04ohlmSrZf8bkf/iJsl3V0dRGsQN/5GFfx+LbCSsCpp2gqrqjTVg/K6O8ycoV35JIwAzAg==}
+    engines: {node: '>= 12'}
+    dev: true
+
+  /@cspotcode/source-map-support/0.7.0:
+    resolution: {integrity: sha512-X4xqRHqN8ACt2aHVe51OxeA2HjbcL4MqFqXkrmQszJ1NOUuUu5u6Vqx/0lZSVNku7velL5FC/s5uEAj1lsBMhA==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@cspotcode/source-map-consumer': 0.8.0
+    dev: true
+
   /@dabh/diagnostics/2.0.2:
     resolution: {integrity: sha512-+A1YivoVDNNVCdfozHSR8v/jyuuLTMXwjWuxPFlFlUapXoGc+Gj9mDlTDDfrwl7rXCl2tNZ0kE8sIBO6YOn96Q==}
     dependencies:
@@ -1508,7 +1524,7 @@ packages:
     dev: true
     optional: true
 
-  /@graphql-tools/url-loader/6.10.1_graphql@15.7.2:
+  /@graphql-tools/url-loader/6.10.1_82c07115ad43a93b00471ba59bdcb6bf:
     resolution: {integrity: sha512-DSDrbhQIv7fheQ60pfDpGD256ixUQIR6Hhf9Z5bRjVkXOCvO5XrkwoWLiU7iHL81GB1r0Ba31bf+sl+D4nyyfw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0
@@ -1527,7 +1543,7 @@ packages:
       is-promise: 4.0.0
       isomorphic-ws: 4.0.1_ws@7.4.5
       lodash: 4.17.21
-      meros: 1.1.4
+      meros: 1.1.4_@types+node@16.11.10
       subscriptions-transport-ws: 0.9.19_graphql@15.7.2
       sync-fetch: 0.3.0
       tslib: 2.2.0
@@ -2298,10 +2314,10 @@ packages:
     dev: true
     optional: true
 
-  /@truffle/db-loader/0.0.19:
+  /@truffle/db-loader/0.0.19_@types+node@16.11.10:
     resolution: {integrity: sha512-s1H8/Uk26BmRdLbGrv5859Uj2dozbMQHe5YrQgY6NoJIsuSbIqwv1uFZu4vWNaICA44LPntsIWRvVLtyjDzN7w==}
     optionalDependencies:
-      '@truffle/db': 0.5.40
+      '@truffle/db': 0.5.40_@types+node@16.11.10
     transitivePeerDependencies:
       - '@types/node'
       - abstract-leveldown
@@ -2312,7 +2328,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@truffle/db/0.5.40:
+  /@truffle/db/0.5.40_@types+node@16.11.10:
     resolution: {integrity: sha512-93s7K2Of3tQC0rD+QQXHg/kSJTdZzldHbQx8vttfL8c4h+l4UtzfdhqaRjH0iysi0GNH02V0XBWnktiJ6DIJQw==}
     requiresBuild: true
     dependencies:
@@ -2325,7 +2341,7 @@ packages:
       fs-extra: 9.1.0
       graphql: 15.7.2
       graphql-tag: 2.12.6_graphql@15.7.2
-      graphql-tools: 6.2.6_graphql@15.7.2
+      graphql-tools: 6.2.6_82c07115ad43a93b00471ba59bdcb6bf
       json-stable-stringify: 1.0.1
       jsondown: 1.0.0
       pascal-case: 2.0.1
@@ -2547,6 +2563,22 @@ packages:
     dev: true
     optional: true
 
+  /@tsconfig/node10/1.0.8:
+    resolution: {integrity: sha512-6XFfSQmMgq0CFLY1MslA/CPUfhIL919M1rMsa5lP2P097N2Wd1sSX0tx1u4olM16fLNhtHZpRhedZJphNJqmZg==}
+    dev: true
+
+  /@tsconfig/node12/1.0.9:
+    resolution: {integrity: sha512-/yBMcem+fbvhSREH+s14YJi18sp7J9jpuhYByADT2rypfajMZZN4WQ6zBGgBKp53NKmqI36wFYDb3yaMPurITw==}
+    dev: true
+
+  /@tsconfig/node14/1.0.1:
+    resolution: {integrity: sha512-509r2+yARFfHHE7T6Puu2jjkoycftovhXRqW328PDXTVGKihlb1P8Z9mMZH04ebyajfRY7dedfGynlrFHJUQCg==}
+    dev: true
+
+  /@tsconfig/node16/1.0.2:
+    resolution: {integrity: sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==}
+    dev: true
+
   /@typechain/ethers-v5/8.0.4_typechain@6.0.4+typescript@4.5.2:
     resolution: {integrity: sha512-778WF5PUsnftVjFp16TMMDgii2if8+WNx+BeVZffPtKhk8Qxg2GD1+5RulR2c7XxxmqWM6H/cla+1oA8qQdjBw==}
     peerDependencies:
@@ -2573,7 +2605,7 @@ packages:
   /@types/bn.js/4.11.6:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}
     dependencies:
-      '@types/node': 12.20.37
+      '@types/node': 16.11.10
     dev: true
 
   /@types/bn.js/5.1.0:
@@ -3034,6 +3066,11 @@ packages:
       acorn: 8.6.0
     dev: true
 
+  /acorn-walk/8.2.0:
+    resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
+    engines: {node: '>=0.4.0'}
+    dev: true
+
   /acorn/2.7.0:
     resolution: {integrity: sha1-q259nYhqrKiwhbwzEreaGYQz8Oc=}
     engines: {node: '>=0.4.0'}
@@ -3441,6 +3478,10 @@ packages:
       readable-stream: 2.3.7
     dev: true
     optional: true
+
+  /arg/4.1.3:
+    resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
+    dev: true
 
   /argparse/1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
@@ -4936,6 +4977,10 @@ packages:
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
       sha.js: 2.4.11
+    dev: true
+
+  /create-require/1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: true
 
   /cross-fetch/3.0.6:
@@ -7189,7 +7234,7 @@ packages:
     dev: true
     optional: true
 
-  /graphql-tools/6.2.6_graphql@15.7.2:
+  /graphql-tools/6.2.6_82c07115ad43a93b00471ba59bdcb6bf:
     resolution: {integrity: sha512-OyhSvK5ALVVD6bFiWjAqv2+lRyvjIRfb6Br5Tkjrv++rxnXDodPH/zhMbDGRw+W3SD5ioGEEz84yO48iPiN7jA==}
     deprecated: This package has been deprecated and now it only exports makeExecutableSchema.\nAnd it will no longer receive updates.\nWe recommend you to migrate to scoped packages such as @graphql-tools/schema, @graphql-tools/utils and etc.\nCheck out https://www.graphql-tools.com to learn what package you should use instead
     peerDependencies:
@@ -7214,7 +7259,7 @@ packages:
       '@graphql-tools/resolvers-composition': 6.4.1_graphql@15.7.2
       '@graphql-tools/schema': 6.2.4_graphql@15.7.2
       '@graphql-tools/stitch': 6.2.4_graphql@15.7.2
-      '@graphql-tools/url-loader': 6.10.1_graphql@15.7.2
+      '@graphql-tools/url-loader': 6.10.1_82c07115ad43a93b00471ba59bdcb6bf
       '@graphql-tools/utils': 6.2.4_graphql@15.7.2
       '@graphql-tools/wrap': 6.2.4_graphql@15.7.2
       graphql: 15.7.2
@@ -9232,6 +9277,10 @@ packages:
     dev: true
     optional: true
 
+  /make-error/1.3.6:
+    resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
+    dev: true
+
   /map-cache/0.2.2:
     resolution: {integrity: sha1-wyq9C9ZSXZsFFkW7TyasXcmKDb8=}
     engines: {node: '>=0.10.0'}
@@ -9333,7 +9382,7 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /meros/1.1.4:
+  /meros/1.1.4_@types+node@16.11.10:
     resolution: {integrity: sha512-E9ZXfK9iQfG9s73ars9qvvvbSIkJZF5yOo9j4tcwM5tN8mUKfj/EKN5PzOr3ZH0y5wL7dLAHw3RVEfpQV9Q7VQ==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -9341,6 +9390,8 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+    dependencies:
+      '@types/node': 16.11.10
     dev: true
     optional: true
 
@@ -12955,18 +13006,18 @@ packages:
       lodash.isequal: 4.5.0
     dev: true
 
-  /truffle/5.4.22:
+  /truffle/5.4.22_@types+node@16.11.10:
     resolution: {integrity: sha512-2wIlw1yZUATo1chlkAkulFNmv9IaX9/Rb8jJKaKaj2YtQL7XB75qVINYlrR+tkzra6Hm8Zjo8IvBzpnk6PeYSw==}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@truffle/db-loader': 0.0.19
+      '@truffle/db-loader': 0.0.19_@types+node@16.11.10
       '@truffle/debugger': 9.2.4
       app-module-path: 2.2.0
       mocha: 8.1.2
       original-require: 1.0.1
     optionalDependencies:
-      '@truffle/db': 0.5.40
+      '@truffle/db': 0.5.40_@types+node@16.11.10
       '@truffle/preserve-fs': 0.2.4
       '@truffle/preserve-to-buckets': 0.2.4
       '@truffle/preserve-to-filecoin': 0.2.4
@@ -13006,6 +13057,36 @@ packages:
       tslib: 2.3.1
     dev: true
     optional: true
+
+  /ts-node/10.4.0_36929cccfdb926da0bb85cc291f27124:
+    resolution: {integrity: sha512-g0FlPvvCXSIO1JDF6S232P5jPYqBkRL9qly81ZgAOSU7rwI0stphCgd2kLiCrU9DjQCrJMWEqcNSjQL02s6d8A==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.7.0
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 16.11.10
+      acorn: 8.6.0
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.5.2
+      yn: 3.1.1
+    dev: true
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
@@ -14403,6 +14484,11 @@ packages:
       yargs-parser: 7.0.0
     dev: true
     optional: true
+
+  /yn/3.1.1:
+    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
+    engines: {node: '>=6'}
+    dev: true
 
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}

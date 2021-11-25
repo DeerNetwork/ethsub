@@ -1,3 +1,4 @@
+import fs from "fs";
 import { createLogger, format, transports } from "winston";
 
 export async function sleep(timeMs: number) {
@@ -20,3 +21,7 @@ export const logger = createLogger({
   ),
   transports: [new transports.Console()],
 });
+
+export async function loadJsonValue(file: string) {
+  return JSON.parse(await fs.promises.readFile(file, "utf-8"));
+}
