@@ -2,5 +2,7 @@ node_modules
 dist
 *.log
 package-lock.json
-yarn.lock
 .vscode
+/solidity
+/cb-sol-cli
+/config.json
