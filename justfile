@@ -1,6 +1,16 @@
 compile-sol:
     rm -rf packages/solidity/build
     pnpm run --filter ./packages/solidity compile
+ 
+typegen-sol:
+    #!/bin/bash
+    contracts=( Bridge ERC20Handler GenericHandler )
+    for contract in ${contracts[@]}; do
+        npx typechain --target ethers-v5 --out-dir packages/main/src/contracts/ packages/solidity/build/contracts/${contract}.json
+    done
+
+sol *args:
+    -node packages/sol-cli/index.js {{args}}
 
 run-eth:
     ganache-cli \

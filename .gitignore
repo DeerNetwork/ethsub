@@ -4,4 +4,5 @@ dist
 *.log
 .vscode
 /packages/main/config.json
+/packages/main/src/contracts
 /sol

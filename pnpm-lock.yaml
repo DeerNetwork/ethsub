@@ -4,6 +4,7 @@ importers:
 
   .:
     specifiers:
+      '@typechain/ethers-v5': ^8.0.4
       '@typescript-eslint/eslint-plugin': ^5.4.0
       '@typescript-eslint/parser': ^5.4.0
       eslint: ^8.3.0
@@ -14,6 +15,8 @@ importers:
       truffle: ^5.4.22
       typechain: ^6.0.4
       typescript: ^4.5.2
+    dependencies:
+      '@typechain/ethers-v5': 8.0.4_typechain@6.0.4+typescript@4.5.2
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.4.0_5c8ff4cecd5a55e744866c0654edac32
       '@typescript-eslint/parser': 5.4.0_eslint@8.3.0+typescript@4.5.2
@@ -28,11 +31,16 @@ importers:
 
   packages/main:
     specifiers:
+      '@ethersproject/abi': ^5.5.0
+      '@ethersproject/providers': ^5.5.0
       ethers: ^5.5.1
       winston: ^3.3.3
     dependencies:
       ethers: 5.5.1
       winston: 3.3.3
+    devDependencies:
+      '@ethersproject/abi': 5.5.0
+      '@ethersproject/providers': 5.5.0
 
   packages/sol-cli:
     specifiers:
@@ -2538,6 +2546,22 @@ packages:
       super-split: 1.1.0
     dev: true
     optional: true
+
+  /@typechain/ethers-v5/8.0.4_typechain@6.0.4+typescript@4.5.2:
+    resolution: {integrity: sha512-778WF5PUsnftVjFp16TMMDgii2if8+WNx+BeVZffPtKhk8Qxg2GD1+5RulR2c7XxxmqWM6H/cla+1oA8qQdjBw==}
+    peerDependencies:
+      '@ethersproject/abi': ^5.0.0
+      '@ethersproject/bytes': ^5.0.0
+      '@ethersproject/providers': ^5.0.0
+      ethers: ^5.1.3
+      typechain: ^6.0.4
+      typescript: '>=4.0.0'
+    dependencies:
+      lodash: 4.17.21
+      ts-essentials: 7.0.3_typescript@4.5.2
+      typechain: 6.0.4_typescript@4.5.2
+      typescript: 4.5.2
+    dev: false
 
   /@types/accepts/1.3.5:
     resolution: {integrity: sha512-jOdnI/3qTpHABjM5cx1Hc0sKsPoYCp+DP/GJRGtDlPd7fiV9oXGGIcjW/ZOxLIvjGz8MA+uMZI9metHlgqbgwQ==}
@@ -9111,7 +9135,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols/2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}
@@ -12968,7 +12991,6 @@ packages:
       typescript: '>=3.7.0'
     dependencies:
       typescript: 4.5.2
-    dev: true
 
   /ts-invariant/0.4.4:
     resolution: {integrity: sha512-uEtWkFM/sdZvRNNDL3Ehu4WVpwaulhwQszV8mrtcdeE8nN00BV9mAmQ88RkrBhFgl9gMgvjJLAQcZbnPXI9mlA==}
