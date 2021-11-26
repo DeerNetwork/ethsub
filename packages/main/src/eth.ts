@@ -2,13 +2,11 @@ import { ethers, Wallet } from "ethers";
 import { Bridge } from "./contracts/Bridge";
 import { ERC20Handler } from "./contracts/ERC20Handler";
 import { logger, sleep } from "./utils";
-import { BridgeMsg, BridgeMsgType } from "./bridge";
+import { BridgeMsg } from "./bridge";
 import store from "./store";
 
 const EventSig = {
-  Deposit: "Deposit(uint8,bytes32,uint64)",
-  ProposalEvent: "ProposalEvent(uint8,uint64,uint8,bytes32,bytes32)",
-  ProposalVote: "ProposalVote(uint8,uint64,uint8,bytes32)",
+  Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
 };
 
 const CONTRACT_PATH = "ethsub-solidity/build/contracts";
@@ -19,6 +17,7 @@ const ContractABIs = {
 };
 
 export interface EthConfig {
+  chainId: number;
   url: string;
   confirmBlocks: number;
   startBlock: number;
@@ -27,6 +26,13 @@ export interface EthConfig {
     bridge: string;
     erc20Handler: string;
   };
+  resourceIds: ResourceIdConfig[];
+}
+
+export interface ResourceIdConfig {
+  name: string;
+  value: string;
+  type: string;
 }
 
 export default class Eth {
@@ -63,20 +69,20 @@ export default class Eth {
       if (latestBlock - this.config.confirmBlocks - this.currentBlock <= 0) {
         await sleep(6100);
       }
-      await this.getMsgs();
+      await this.parseBlock();
       await store.storeEthBlockNum(this.currentBlock);
     }
   }
   public async writeMsg(msg: BridgeMsg) {
-    if (msg.type === BridgeMsgType.FungibleTransfer) {
-    } else if (msg.type === BridgeMsgType.GenericTransfer) {
+    if (msg.type === "erc20") {
+    } else if (msg.type === "generic") {
     } else {
       throw new Error(`Writechain throw unknown msg type ${msg.type}`);
     }
   }
-  private async getMsgs() {
+  private async parseBlock() {
     const blockNum = this.currentBlock;
-    logger.debug(`Querying eth block ${blockNum} for deposit events`);
+    logger.debug(`Parse block ${blockNum}`);
     const logs = await this.provider.getLogs({
       fromBlock: blockNum,
       toBlock: blockNum,
@@ -84,8 +90,29 @@ export default class Eth {
       topics: [ethers.utils.id(EventSig.Deposit)],
     });
     for (const log of logs) {
-      console.log(JSON.stringify(log));
+      const logDesc = this.bridge.interface.parseLog(log);
+      const resourceIdData = this.config.resourceIds.find(
+        (v) => v.value.toLowerCase() === logDesc.args.resourceID
+      );
+      if (!resourceIdData) continue;
+      const msg: BridgeMsg = {
+        source: this.config.chainId,
+        destination: logDesc.args.destinationDomainID,
+        depositNonce: logDesc.args.depositNonce.toString(),
+        type: resourceIdData.type,
+        resource: resourceIdData.name,
+        payload: parseDepositErc20(logDesc.args.data),
+      };
+      console.log(msg);
     }
     this.currentBlock += 1;
   }
+}
+
+function parseDepositErc20(data: string) {
+  const amount = ethers.BigNumber.from(
+    ethers.utils.stripZeros(data.slice(0, 66))
+  ).toString();
+  const recipent = data.slice(130);
+  return { recipent, amount };
 }

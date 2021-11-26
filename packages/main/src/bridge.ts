@@ -9,16 +9,12 @@ export interface Ctx {
   sub: Sub;
 }
 
-export enum BridgeMsgType {
-  FungibleTransfer = "FungibleTransfer",
-  GenericTransfer = "GenericTransfer",
-}
-
 export interface BridgeMsg {
   source: number;
   destination: number;
-  type: BridgeMsgType;
   depositNonce: number;
+  type: string;
+  resource: string;
   payload: any;
 }
 
