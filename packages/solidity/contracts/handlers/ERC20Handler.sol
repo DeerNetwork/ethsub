@@ -3,7 +3,7 @@ pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "../interfaces/IDepositExecute.sol";
-import "../ERC20Safe.sol";
+import "../utils/ERC20Safe.sol";
 import "./HandlerHelpers.sol";
 
 /**

@@ -1,22 +1,35 @@
-import path from "path";
 import { ethers, Wallet } from "ethers";
 import { Bridge } from "./contracts/Bridge";
 import { ERC20Handler } from "./contracts/ERC20Handler";
-import { loadJsonValue, logger, sleep } from "./utils";
+import { logger, sleep } from "./utils";
+import { BridgeMsg, BridgeMsgType } from "./bridge";
+import store from "./store";
+
+const EventSig = {
+  Deposit: "Deposit(uint8,bytes32,uint64)",
+  ProposalEvent: "ProposalEvent(uint8,uint64,uint8,bytes32,bytes32)",
+  ProposalVote: "ProposalVote(uint8,uint64,uint8,bytes32)",
+};
+
+const CONTRACT_PATH = "ethsub-solidity/build/contracts";
+
+const ContractABIs = {
+  Bridge: require(CONTRACT_PATH + "/Bridge.json"),
+  Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),
+};
 
 export interface EthConfig {
   url: string;
   confirmBlocks: number;
   startBlock: number;
   privateKey: string;
-  blockstoreFile: string;
   contracts: {
     bridge: string;
     erc20Handler: string;
   };
 }
 
-class Eth {
+export default class Eth {
   private provider: ethers.providers.WebSocketProvider;
   private config: EthConfig;
   private currentBlock: number;
@@ -30,36 +43,49 @@ class Eth {
     eth.wallet = new ethers.Wallet(config.privateKey, eth.provider);
     eth.bridge = new ethers.Contract(
       config.contracts.bridge,
-      (await loadContractAbi("Bridge")).abi,
+      ContractABIs.Bridge.abi,
       eth.wallet
     ) as Bridge;
     eth.erc20Handler = new ethers.Contract(
       config.contracts.erc20Handler,
-      (await loadContractAbi("ERC20Handler")).abi,
+      ContractABIs.Erc20Handler.abi,
       eth.wallet
     ) as ERC20Handler;
+    eth.currentBlock = Math.max(
+      config.startBlock,
+      await store.loadEthBlockNum()
+    );
     return eth;
   }
-  public async listen() {
+  public async pullBlocks() {
     while (true) {
       const latestBlock = await this.provider.getBlockNumber();
       if (latestBlock - this.config.confirmBlocks - this.currentBlock <= 0) {
         await sleep(6100);
       }
-      await this.processBlock();
+      await this.getMsgs();
+      await store.storeEthBlockNum(this.currentBlock);
     }
   }
-  async processBlock() {
+  public async writeMsg(msg: BridgeMsg) {
+    if (msg.type === BridgeMsgType.FungibleTransfer) {
+    } else if (msg.type === BridgeMsgType.GenericTransfer) {
+    } else {
+      throw new Error(`Writechain throw unknown msg type ${msg.type}`);
+    }
+  }
+  private async getMsgs() {
     const blockNum = this.currentBlock;
-    await sleep(2);
-    logger.debug(`Process block ${blockNum}`);
+    logger.debug(`Querying eth block ${blockNum} for deposit events`);
+    const logs = await this.provider.getLogs({
+      fromBlock: blockNum,
+      toBlock: blockNum,
+      address: this.bridge.address,
+      topics: [ethers.utils.id(EventSig.Deposit)],
+    });
+    for (const log of logs) {
+      console.log(JSON.stringify(log));
+    }
     this.currentBlock += 1;
   }
 }
-
-async function loadContractAbi(name: string) {
-  return loadJsonValue(
-    path.resolve(__dirname, "../../solidity/build/contracts", `${name}.json`)
-  );
-}
-export default Eth;

@@ -4,7 +4,8 @@
  */
 const ethers = require("ethers");
 
-const CONTRACT_PATH = "../solidity/build/contracts";
+const CONTRACT_PATH = "ethsub-solidity/build/contracts";
+
 const ContractABIs = {
   Bridge: require(CONTRACT_PATH + "/Bridge.json"),
   Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),
@@ -44,14 +45,19 @@ module.exports.relayerPrivKeys = [
 ];
 
 // These are deterministic
-module.exports.BRIDGE_ADDRESS = "0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B";
+module.exports.BRIDGE_ADDRESS =
+  process.env.BRIDGE_ADDRESS || "0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B";
 module.exports.ERC20_HANDLER_ADDRESS =
+  process.env.ERC20_HANDLER_ADDRESS ||
   "0x3167776db165D8eA0f51790CA2bbf44Db5105ADF";
 module.exports.GENERIC_HANDLER_ADDRESS =
-  "0x2B6Ab4b880A45a07d83Cf4d664Df4Ab85705Bc07";
-module.exports.ERC20_ADDRESS = "0x21605f71845f372A9ed84253d2D024B7B10999f4";
+  process.env.GENERIC_HANDLER_ADDRESS ||
+  "0x3f709398808af36ADBA86ACC617FeB7F5B7B193E";
+module.exports.ERC20_ADDRESS =
+  process.env.ERC20_ADDRESS || "0x2B6Ab4b880A45a07d83Cf4d664Df4Ab85705Bc07";
 module.exports.ASSET_STORE_ADDRESS =
-  "0xc279648CE5cAa25B9bA753dAb0Dfef44A069BaF4";
+  process.env.ASSET_STORE_ADDRESS ||
+  "0x21605f71845f372A9ed84253d2D024B7B10999f4";
 module.exports.DEFAULT_SOURCE_ID = 0;
 module.exports.DEFAULT_DEST_ID = 1;
 

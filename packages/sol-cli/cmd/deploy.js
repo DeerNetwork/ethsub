@@ -55,6 +55,7 @@ const deployCmd = new Command("deploy")
       await deployERC20Handler(args);
       await deployGenericHandler(args);
       await deployERC20(args);
+      await deployAssetStore(args);
     } else {
       let deployed = false;
       if (args.bridge) {
@@ -116,8 +117,8 @@ const displayLog = (args) => {
 ================================================================
 Url:        ${args.url}
 Deployer:   ${args.wallet.address}
-Gas Limit:   ${ethers.utils.bigNumberify(args.gasLimit)}
-Gas Price:   ${ethers.utils.bigNumberify(args.gasPrice)}
+Gas Limit:   ${ethers.BigNumber.from(args.gasLimit).toNumber()}
+Gas Price:   ${ethers.BigNumber.from(args.gasPrice).toNumber()}
 Deploy Cost: ${ethers.utils.formatEther(args.cost)}
 
 Options
@@ -200,7 +201,7 @@ async function deployERC20Handler(args) {
     constants.ContractABIs.Erc20Handler.bytecode,
     args.wallet
   );
-  const contract = await factory.deploy(args.bridgeAddress, [], [], [], {
+  const contract = await factory.deploy(args.bridgeAddress, {
     gasPrice: args.gasPrice,
     gasLimit: args.gasLimit,
   });
@@ -221,7 +222,7 @@ async function deployGenericHandler(args) {
     constants.ContractABIs.GenericHandler.bytecode,
     args.wallet
   );
-  const contract = await factory.deploy(args.bridgeAddress, [], [], [], [], {
+  const contract = await factory.deploy(args.bridgeAddress, {
     gasPrice: args.gasPrice,
     gasLimit: args.gasLimit,
   });

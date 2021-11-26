@@ -2,9 +2,15 @@
   "name": "ethsub-solidity",
   "version": "0.1.0",
   "scripts": {
+    "postinstall": "rimraf build && npm run compile && npm run typegen",
     "compile": "truffle compile",
+    "typegen": "typechain --target ethers-v5 --out-dir build/ethers/ build/contracts/*.json",
     "test": "truffle test"
   },
+  "files": [
+    "build",
+    "contracts"
+  ],
   "dependencies": {
     "@openzeppelin/contracts": "^3.4.2"
   },

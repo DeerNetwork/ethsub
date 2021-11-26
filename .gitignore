@@ -4,5 +4,7 @@ dist
 *.log
 .vscode
 /packages/main/config.json
+/packages/main/data
 /packages/main/src/contracts
 /sol
+.env

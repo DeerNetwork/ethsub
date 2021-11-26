@@ -121,9 +121,9 @@ const depositCmd = new Command("deposit")
       "0x" +
       ethers.utils
         .hexZeroPad(
-          ethers.utils
-            .bigNumberify(expandDecimals(args.amount, args.parent.decimals))
-            .toHexString(),
+          ethers.BigNumber.from(
+            expandDecimals(args.amount, args.parent.decimals)
+          ).toHexString(),
           32
         )
         .substr(2) + // Deposit Amount        (32 bytes)
