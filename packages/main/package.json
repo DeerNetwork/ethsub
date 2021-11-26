@@ -12,12 +12,18 @@
     "@polkadot/api": "^6.9.2",
     "@polkadot/keyring": "^7.9.2",
     "@polkadot/util-crypto": "^7.9.2",
+    "@use-services/echo": "^1.1.0",
+    "@use-services/winston": "^1.0.0",
     "ethers": "^5.5.1",
     "ethsub-sol": "workspace:^",
+    "lodash": "^4.17.21",
+    "p-event": "^4",
+    "use-services": "^1.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.5.0",
-    "@ethersproject/providers": "^5.5.0"
+    "@ethersproject/providers": "^5.5.0",
+    "@types/lodash": "^4.14.177"
   }
 }

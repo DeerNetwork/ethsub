@@ -1,38 +1,53 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { BlockHash } from "@polkadot/types/interfaces";
 import { Keyring } from "@polkadot/keyring";
 import { KeyringPair } from "@polkadot/keyring/types";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import { logger, sleep } from "./utils";
-import store from "./store";
-import { BridgeMsg, ResourceIdConfig } from "./bridge";
+import { ServiceOption, InitOption, INIT_KEY } from "use-services";
+import { Service as StoreService } from "./store";
+import { sleep, BridgeMsg } from "./utils";
+import { srvs } from "./services";
 
-export interface SubConfig {
+export type Deps = [StoreService];
+export type Option<S extends Service> = ServiceOption<Args, S>;
+
+export interface Args {
   chainId: number;
   url: string;
   secret: string;
   startBlock: number;
-  resourceIds: ResourceIdConfig[];
 }
 
-export default class Sub {
+export async function init<S extends Service>(
+  option: InitOption<Args, S>
+): Promise<S> {
+  const srv = new (option.ctor || Service)(option);
+  await srv[INIT_KEY]();
+  return srv as S;
+}
+
+export class Service {
   private api: ApiPromise;
-  private config: SubConfig;
+  private args: Args;
   private currentBlock: number;
+  private store: StoreService;
   private wallet: KeyringPair;
-  public static async init(config: SubConfig): Promise<Sub> {
-    const sub = new Sub();
-    sub.config = config;
-    sub.api = new ApiPromise({
-      provider: new WsProvider(config.url),
+  public constructor(option: InitOption<Args, Service>) {
+    if (option.deps.length !== 1) {
+      throw new Error("miss deps [store]");
+    }
+    this.store = option.deps[0];
+    this.args = option.args;
+  }
+  public async [INIT_KEY]() {
+    this.api = new ApiPromise({
+      provider: new WsProvider(this.args.url),
     });
-    await sub.api.isReady;
-    sub.wallet = await createWallet(config.secret);
-    sub.currentBlock = Math.max(
-      config.startBlock,
-      await store.loadSubBlockNum()
+    await this.api.isReady;
+    this.wallet = await createWallet(this.args.secret);
+    this.currentBlock = Math.max(
+      this.args.startBlock,
+      await this.store.loadSubBlockNum()
     );
-    return sub;
   }
 
   public async pullBlocks() {
@@ -45,21 +60,21 @@ export default class Sub {
         continue;
       }
       await this.parseBlock();
-      await store.storeSubBlockNum(this.currentBlock);
+      await this.store.storeSubBlockNum(this.currentBlock);
     }
   }
   private async parseBlock() {
     const blockNum = this.currentBlock;
     const blockHash = await this.api.rpc.chain.getBlockHash(blockNum);
-    logger.debug(`Parse sub block ${blockNum}`);
+    srvs.logger.debug(`Parse sub block ${blockNum}`);
     const events = await this.api.query.system.events.at(blockHash);
     for (const evt of events) {
       const { event } = evt;
       if (event.section === "bridge") {
         if (event.method === "FungibleTransfer") {
           const resourceId = event.data[2].toString();
-          const resourceIdData = this.config.resourceIds.find(
-            (v) => v.value === resourceId
+          const resourceIdData = srvs.settings.resources.find(
+            (v) => v.sub === resourceId
           );
           if (!resourceIdData) continue;
           const destination = parseInt(event.data[0].toString());
@@ -67,12 +82,11 @@ export default class Sub {
           const amount = event.data[3].toString();
           const recipent = event.data[4].toString();
           const msg: BridgeMsg = {
-            source: this.config.chainId,
+            source: this.args.chainId,
             destination,
             depositNonce,
             type: resourceIdData.type,
-            resourceId,
-            resourceName: resourceIdData.name,
+            resource: resourceIdData.name,
             payload: { amount, recipent },
           };
           console.log(msg);

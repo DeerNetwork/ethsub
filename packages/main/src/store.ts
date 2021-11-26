@@ -1,16 +1,33 @@
 import fs from "fs";
 import path from "path";
-import { config } from "./utils";
+import { ServiceOption, InitOption, INIT_KEY } from "use-services";
+
+export type Option<S extends Service> = ServiceOption<Args, S>;
+
+export interface Args {
+  baseDir: string;
+}
+
+export async function init<S extends Service>(
+  option: InitOption<Args, S>
+): Promise<S> {
+  const srv = new (option.ctor || Service)(option);
+  await srv[INIT_KEY]();
+  return srv as S;
+}
 
 export enum StoreKeys {
   ETH_BLOCKNUM = "ethBlockNum",
   SUB_BLOCKNUM = "subBlockNum",
 }
 
-export class Store {
+export class Service {
   private dataDir: string;
-  constructor(dataDir: string) {
-    this.dataDir = dataDir;
+  public constructor(option: InitOption<Args, Service>) {
+    this.dataDir = option.args.baseDir;
+  }
+  public async [INIT_KEY]() {
+    await fs.promises.mkdir(this.dataDir, { recursive: true });
   }
   public async storeEthBlockNum(blockNum: number) {
     await this.writeKeyFile(StoreKeys.ETH_BLOCKNUM, blockNum.toString());
@@ -44,12 +61,3 @@ export class Store {
     return path.resolve(this.dataDir, key);
   }
 }
-
-function createStore(): Store {
-  const { dataDir } = config;
-  fs.mkdirSync(dataDir, { recursive: true });
-  const store = new Store(dataDir);
-  return store;
-}
-
-export default createStore();

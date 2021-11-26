@@ -42,19 +42,31 @@ importers:
       '@polkadot/api': ^6.9.2
       '@polkadot/keyring': ^7.9.2
       '@polkadot/util-crypto': ^7.9.2
+      '@types/lodash': ^4.14.177
+      '@use-services/echo': ^1.1.0
+      '@use-services/winston': ^1.0.0
       ethers: ^5.5.1
       ethsub-sol: workspace:^
+      lodash: ^4.17.21
+      p-event: ^4
+      use-services: ^1.2.0
       winston: ^3.3.3
     dependencies:
       '@polkadot/api': 6.9.2
       '@polkadot/keyring': 7.9.2
       '@polkadot/util-crypto': 7.9.2
+      '@use-services/echo': 1.1.0
+      '@use-services/winston': 1.0.0
       ethers: 5.5.1
       ethsub-sol: link:../sol
+      lodash: 4.17.21
+      p-event: 4.2.0
+      use-services: 1.2.0
       winston: 3.3.3
     devDependencies:
       '@ethersproject/abi': 5.5.0
       '@ethersproject/providers': 5.5.0
+      '@types/lodash': 4.14.177
 
   packages/sol:
     specifiers:
@@ -2957,6 +2969,10 @@ packages:
     dev: true
     optional: true
 
+  /@types/lodash/4.14.177:
+    resolution: {integrity: sha512-0fDwydE2clKe9MNfvXHBHF9WEahRuj+msTuQqOmAApNORFvhMYZKNGGJdCzuhheVjMps/ti0Ak/iJPACMaevvw==}
+    dev: true
+
   /@types/long/4.0.1:
     resolution: {integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==}
     dev: true
@@ -3162,6 +3178,23 @@ packages:
       '@typescript-eslint/types': 5.4.0
       eslint-visitor-keys: 3.1.0
     dev: true
+
+  /@use-services/echo/1.1.0:
+    resolution: {integrity: sha512-yZ/c7Vj5H19hba9AQFRIxVwmEnqNYN5lG3OWi7I7Q+A9qMocpDASqiYf8uIi5b6K3bFSghBZycNaS8HUqar1vQ==}
+    dependencies:
+      use-services: 1.2.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@use-services/winston/1.0.0:
+    resolution: {integrity: sha512-wTTbfl3nKBKjeKxyfPymnQ0033KUWqMrVxxp7+dyFC+ozEd3htH5kXzxeYcka+M5TEnaNfibwcpH7FBGfUNrqA==}
+    dependencies:
+      use-services: 1.2.0
+      winston: 3.3.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /@wry/context/0.6.1:
     resolution: {integrity: sha512-LOmVnY1iTU2D8tv4Xf6MVMZZ+juIJ87Kt/plMijjN20NMAXGmH4u8bS1t0uT74cZ5gwpocYueV58YwyI8y+GKw==}
@@ -5416,7 +5449,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
-    dev: true
 
   /decamelize/1.2.0:
     resolution: {integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=}
@@ -9880,7 +9912,6 @@ packages:
 
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
-    dev: true
 
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -10664,6 +10695,13 @@ packages:
     dev: true
     optional: true
 
+  /p-event/4.2.0:
+    resolution: {integrity: sha512-KXatOjCRXXkSePPb1Nbi0p0m+gQAwdlbhi4wQKJPI1HsMQS9g+Sqp2o+QHziPr7eYJyOZet836KoHEVM1mwOrQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      p-timeout: 3.2.0
+    dev: false
+
   /p-fifo/1.0.0:
     resolution: {integrity: sha512-IjoCxXW48tqdtDFz6fqo5q1UfFVjjVZe8TC1QRflvNUJtNfCUhxOUw6MOVZhDPjqhSzc26xKdugsO17gmzd5+A==}
     dependencies:
@@ -10675,7 +10713,6 @@ packages:
   /p-finally/1.0.0:
     resolution: {integrity: sha1-P7z7FbiZpEEjs0ttzBi3JDNqLK4=}
     engines: {node: '>=4'}
-    dev: true
 
   /p-limit/1.3.0:
     resolution: {integrity: sha512-vvcXsLAJ9Dr5rQOPk7toZQZJApBl2K4J6dANSsEuh6QI41JYcsS/qhTGa9ErIUUgK3WNQoJYvylxvjqmiqEA9Q==}
@@ -10735,6 +10772,13 @@ packages:
     dependencies:
       p-finally: 1.0.0
     dev: true
+
+  /p-timeout/3.2.0:
+    resolution: {integrity: sha512-rhIwUycgwwKcP9yTOOFK/AKsAopjjCakVqLHePO3CC6Mir1Z99xT+R63jZxAT5lFZLa2inS5h+ZS2GvR99/FBg==}
+    engines: {node: '>=8'}
+    dependencies:
+      p-finally: 1.0.0
+    dev: false
 
   /p-try/1.0.0:
     resolution: {integrity: sha1-y8ec26+P1CKOE/Yh8rGiN8GyB7M=}
@@ -13682,6 +13726,15 @@ packages:
       nan: 2.15.0
     dev: true
     optional: true
+
+  /use-services/1.2.0:
+    resolution: {integrity: sha512-QYmzjzm/i/ISZwwvL86gs+B6O50iEeVR2PzD01513qoPNfN7ux8BR9XGTLh2uesr/Is8IUg8tqekdL9X/RxvOw==}
+    dependencies:
+      debug: 4.3.2
+      p-event: 4.2.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /use/3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}

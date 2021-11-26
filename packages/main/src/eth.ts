@@ -1,9 +1,13 @@
 import { ethers, Wallet } from "ethers";
-import { Bridge } from "./contracts/Bridge";
-import { ERC20Handler } from "./contracts/ERC20Handler";
-import { logger, sleep } from "./utils";
-import { BridgeMsg, ResourceIdConfig } from "./bridge";
-import store from "./store";
+import { Bridge } from "ethsub-sol/build/ethers/Bridge";
+import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
+import { ServiceOption, InitOption, INIT_KEY } from "use-services";
+import { Service as StoreService } from "./store";
+import { sleep, BridgeMsg } from "./utils";
+import { srvs } from "./services";
+
+export type Deps = [StoreService];
+export type Option<S extends Service> = ServiceOption<Args, S>;
 
 const EventSig = {
   Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
@@ -16,7 +20,7 @@ const ContractABIs = {
   Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),
 };
 
-export interface EthConfig {
+export interface Args {
   chainId: number;
   url: string;
   confirmBlocks: number;
@@ -26,46 +30,59 @@ export interface EthConfig {
     bridge: string;
     erc20Handler: string;
   };
-  resourceIds: ResourceIdConfig[];
 }
 
-export default class Eth {
+export async function init<S extends Service>(
+  option: InitOption<Args, S>
+): Promise<S> {
+  const srv = new (option.ctor || Service)(option);
+  await srv[INIT_KEY]();
+  return srv as S;
+}
+
+export class Service {
   private provider: ethers.providers.WebSocketProvider;
-  private config: EthConfig;
+  private args: Args;
   private currentBlock: number;
   private wallet: Wallet;
   private bridge: Bridge;
+  private store: StoreService;
   private erc20Handler: ERC20Handler;
-  public static async init(config: EthConfig) {
-    const eth = new Eth();
-    eth.config = config;
-    eth.provider = new ethers.providers.WebSocketProvider(config.url);
-    eth.wallet = new ethers.Wallet(config.privateKey, eth.provider);
-    eth.bridge = new ethers.Contract(
-      config.contracts.bridge,
+  public constructor(option: InitOption<Args, Service>) {
+    if (option.deps.length !== 1) {
+      throw new Error("miss deps [store]");
+    }
+    this.store = option.deps[0];
+    this.args = option.args;
+  }
+  public async [INIT_KEY]() {
+    const { url, startBlock, privateKey, contracts } = this.args;
+    this.provider = new ethers.providers.WebSocketProvider(url);
+    this.wallet = new ethers.Wallet(privateKey, this.provider);
+    this.bridge = new ethers.Contract(
+      contracts.bridge,
       ContractABIs.Bridge.abi,
-      eth.wallet
+      this.wallet
     ) as Bridge;
-    eth.erc20Handler = new ethers.Contract(
-      config.contracts.erc20Handler,
+    this.erc20Handler = new ethers.Contract(
+      contracts.erc20Handler,
       ContractABIs.Erc20Handler.abi,
-      eth.wallet
+      this.wallet
     ) as ERC20Handler;
-    eth.currentBlock = Math.max(
-      config.startBlock,
-      await store.loadEthBlockNum()
+    this.currentBlock = Math.max(
+      startBlock,
+      await this.store.loadEthBlockNum()
     );
-    return eth;
   }
   public async pullBlocks() {
     while (true) {
       const latestBlock = await this.provider.getBlockNumber();
-      if (latestBlock - this.config.confirmBlocks - this.currentBlock <= 0) {
+      if (latestBlock - this.args.confirmBlocks - this.currentBlock <= 0) {
         await sleep(3000);
         continue;
       }
       await this.parseBlock();
-      await store.storeEthBlockNum(this.currentBlock);
+      await this.store.storeEthBlockNum(this.currentBlock);
     }
   }
   public async writeMsg(msg: BridgeMsg) {
@@ -77,7 +94,7 @@ export default class Eth {
   }
   private async parseBlock() {
     const blockNum = this.currentBlock;
-    logger.debug(`Parse eth block ${blockNum}`);
+    srvs.logger.debug(`Parse eth block ${blockNum}`);
     const logs = await this.provider.getLogs({
       fromBlock: blockNum,
       toBlock: blockNum,
@@ -86,17 +103,16 @@ export default class Eth {
     });
     for (const log of logs) {
       const logDesc = this.bridge.interface.parseLog(log);
-      const resourceIdData = this.config.resourceIds.find(
-        (v) => v.value.toLowerCase() === logDesc.args.resourceID
+      const resourceIdData = srvs.settings.resources.find(
+        (v) => v.eth.toLowerCase() === logDesc.args.resourceID
       );
       if (!resourceIdData) continue;
       const msg: BridgeMsg = {
-        source: this.config.chainId,
+        source: this.args.chainId,
         destination: logDesc.args.destinationDomainID,
         depositNonce: logDesc.args.depositNonce.toNumber(),
         type: resourceIdData.type,
-        resourceId: resourceIdData.value,
-        resourceName: resourceIdData.name,
+        resource: resourceIdData.name,
         payload: parseDepositErc20(logDesc.args.data),
       };
       console.log(msg);
