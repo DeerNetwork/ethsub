@@ -5,13 +5,15 @@
 const ethers = require("ethers");
 
 const CONTRACT_PATH = "ethsub-sol/build/contracts";
-
 const ContractABIs = {
   Bridge: require(CONTRACT_PATH + "/Bridge.json"),
   Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),
   Erc20Mintable: require(CONTRACT_PATH + "/ERC20Custom.json"),
+  Erc721Handler: require(CONTRACT_PATH + "/ERC721Handler.json"),
+  Erc721Mintable: require(CONTRACT_PATH + "/ERC721MinterBurnerPauser.json"),
   GenericHandler: require(CONTRACT_PATH + "/GenericHandler.json"),
-  ChainAsset: require(CONTRACT_PATH + "/ChainAsset.json"),
+  ChainAssetStore: require(CONTRACT_PATH + "/ChainAsset.json"),
+  WETH: require(CONTRACT_PATH + "/WETH9.json"),
   HandlerHelpers: require(CONTRACT_PATH + "/HandlerHelpers.json"),
 };
 
@@ -50,14 +52,21 @@ module.exports.BRIDGE_ADDRESS =
 module.exports.ERC20_HANDLER_ADDRESS =
   process.env.ERC20_HANDLER_ADDRESS ||
   "0x3167776db165D8eA0f51790CA2bbf44Db5105ADF";
+module.exports.ERC721_HANDLER_ADDRESS =
+  process.env.ERC721_HANDLER_ADDRESS ||
+  "0x3f709398808af36ADBA86ACC617FeB7F5B7B193E";
 module.exports.GENERIC_HANDLER_ADDRESS =
   process.env.GENERIC_HANDLER_ADDRESS ||
-  "0x3f709398808af36ADBA86ACC617FeB7F5B7B193E";
+  "0x2B6Ab4b880A45a07d83Cf4d664Df4Ab85705Bc07";
 module.exports.ERC20_ADDRESS =
-  process.env.ERC20_ADDRESS || "0x2B6Ab4b880A45a07d83Cf4d664Df4Ab85705Bc07";
-module.exports.ASSET_STORE_ADDRESS =
-  process.env.ASSET_STORE_ADDRESS ||
-  "0x21605f71845f372A9ed84253d2D024B7B10999f4";
+  process.env.ERC20_ADDRESS || "0x21605f71845f372A9ed84253d2D024B7B10999f4";
+module.exports.ERC721_ADDRESS =
+  process.env.ERC721_ADDRESS || "0xd7E33e1bbf65dC001A0Eb1552613106CD7e40C31";
+module.exports.CHAIN_ASSET_STORE_ADDRESS =
+  process.env.CHAIN_ASSET_STORE_ADDRESS ||
+  "0xc279648CE5cAa25B9bA753dAb0Dfef44A069BaF4";
+module.exports.WETH_ADDRESS =
+  process.env.WETH_ADDRESS || "0x84b141Aada70e2B0C3Ec25d24E81032328ea1b1A";
 module.exports.DEFAULT_SOURCE_ID = 0;
 module.exports.DEFAULT_DEST_ID = 1;
 
@@ -65,8 +74,12 @@ module.exports.ERC20_RESOURCEID = ethers.utils.hexZeroPad(
   this.ERC20_ADDRESS + ethers.utils.hexlify(this.DEFAULT_SOURCE_ID).substr(2),
   32
 );
+module.exports.ERC721_RESOURCEID = ethers.utils.hexZeroPad(
+  this.ERC721_ADDRESS + ethers.utils.hexlify(this.DEFAULT_SOURCE_ID).substr(2),
+  32
+);
 module.exports.GENERIC_RESOURCEID = ethers.utils.hexZeroPad(
-  this.ASSET_STORE_ADDRESS +
+  this.CHAIN_ASSET_STORE_ADDRESS +
     ethers.utils.hexlify(this.DEFAULT_SOURCE_ID).substr(2),
   32
 );

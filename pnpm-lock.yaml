@@ -50,23 +50,13 @@ importers:
       '@polkadot/keyring': 7.9.2
       '@polkadot/util-crypto': 7.9.2
       ethers: 5.5.1
-      ethsub-sol: link:../soli
+      ethsub-sol: link:../sol
       winston: 3.3.3
     devDependencies:
       '@ethersproject/abi': 5.5.0
       '@ethersproject/providers': 5.5.0
 
-  packages/sol-cli:
-    specifiers:
-      commander: ^5.0.0
-      ethers: ^5.5.1
-      ethsub-sol: workspace:^
-    dependencies:
-      commander: 5.1.0
-      ethers: 5.5.1
-      ethsub-sol: link:../soli
-
-  packages/soli:
+  packages/sol:
     specifiers:
       '@openzeppelin/contracts': ^3.4.2
       ethers: ^5.5.1
@@ -76,6 +66,16 @@ importers:
     devDependencies:
       ethers: 5.5.1
       truffle-assertions: 0.9.2
+
+  packages/sol-cli:
+    specifiers:
+      commander: ^5.0.0
+      ethers: ^5.5.1
+      ethsub-sol: workspace:^
+    dependencies:
+      commander: 5.1.0
+      ethers: 5.5.1
+      ethsub-sol: link:../sol
 
   packages/sub-cli:
     specifiers:

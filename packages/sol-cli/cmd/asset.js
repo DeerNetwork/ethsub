@@ -14,14 +14,14 @@ const getHashCmd = new Command("getHash")
   )
   .option(
     "--address <value>",
-    "Asset store contract address",
+    "Chain asset store contract address",
     constants.CHAIN_ASSET_STORE_ADDRESS
   )
   .action(async function (args) {
     await setupParentArgs(args, args.parent.parent);
     const assetStore = new ethers.Contract(
       args.address,
-      constants.ContractABIs.ChainAsset.abi,
+      constants.ContractABIs.ChainAssetStore.abi,
       args.wallet
     );
     const res = await assetStore._assetsStored(

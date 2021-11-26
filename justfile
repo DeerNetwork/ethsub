@@ -1,3 +1,5 @@
+set dotenv-load := true
+
 npm pkg +args:
     pnpm --filter ./packages/{{pkg}} {{args}}
 
@@ -11,7 +13,7 @@ run:
     rm -rf packages/main/data
     pnpm run --filter ./packages/main dev
 
-eth-run +args='-b 3 -l 8000000':
+run-eth +args='-b 3 -l 8000000':
     ganache-cli \
         {{args}} \
         --account "0x000000000000000000000000000000000000000000000000000000616c696365,100000000000000000000" \
@@ -20,10 +22,9 @@ eth-run +args='-b 3 -l 8000000':
         --account "0x0000000000000000000000000000000000000000000000000000000064617665,100000000000000000000" \
         --account "0x0000000000000000000000000000000000000000000000000000000000657665,100000000000000000000"
 
-sub-run:
+run-sub +args='--tmp --dev':
     sub-node \
-        --dev \
-        --tmp \
+        {{args}} \
         --port 30333 \
         --ws-port 9944 \
         --rpc-port 9933 \
@@ -32,25 +33,26 @@ sub-run:
         --rpc-cors all \
         --unsafe-ws-external
 
-eth-setup:
+init-eth:
     just sol-cli deploy --all --relayerThreshold 1
-    just sol-cli bridge register-resource --resourceId $ERC20_RESOURCEID --targetContract $CONTRACT_ERC20
-    just sol-cli bridge set-burn --tokenContract $CONTRACT_ERC20
-    just sol-cli erc20 add-minter --minter $CONTRACT_ERC20_HANDLER
+    just sol-cli bridge register-resource --resourceId $ERC20_RESOURCEID --targetContract $ERC20_ADDRESS
+    just sol-cli bridge set-burn --tokenContract $ERC20_ADDRESS
+    just sol-cli erc20 add-minter --minter $ERC20_HANDLER_ADDRESS
 
-sub-setup:
-    just sub-cli --sudo bridge.addRelayer $SUB_ACCOUNT
-    just sub-cli --sudo bridge.setResource $SUB_TOKEN_RESOURCEID $PALLET_METHOD_TRANSFER
+init-sub:
+    just sub-cli --sudo bridge.addRelayer $SUB_ACCOUNT_ADDRESS
+    just sub-cli --sudo bridge.setResource $SUB_TOKEN_RESOURCEID $PALLET_TRANSFER_METHOD
     just sub-cli --sudo bridge.whitelistChain 0
     just sub-cli --sudo bridgeTransfer.changeFee 1 1 0
 
-eth-transfer *mint:
+trans-eth:
     #!/bin/bash
-    if [[ -n "{{mint}}" ]]; then
+    q=$(just sol-cli erc20 allowance)
+    if [[ "$q" =~ "0 tokens" ]]; then
         just sol-cli erc20 mint --amount 1000
-        just sol-cli erc20 approve --amount 1000 --recipient $CONTRACT_ERC20_HANDLER 
+        just sol-cli erc20 approve --amount 1000 --recipient $ERC20_HANDLER_ADDRESS 
     fi
-    just sol-cli erc20 deposit --amount 1 --dest 1 --recipient $SUB_ACCOUNT --resourceId $ERC20_RESOURCEID
+    just sol-cli erc20 deposit --amount 1 --dest 1 --recipient $SUB_ACCOUNT_ADDRESS --resourceId $ERC20_RESOURCEID
 
-sub-transfer:
-    just sub-cli bridgeTransfer.transferNative 1000 $ETH_ACCOUNT 0
+trans-sub:
+    just sub-cli bridgeTransfer.transferNative 1000 $ETH_ACCOUNT_ADDRESS 0

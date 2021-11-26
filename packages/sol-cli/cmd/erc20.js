@@ -217,6 +217,38 @@ const allowanceCmd = new Command("allowance")
     );
   });
 
+const wethDepositCmd = new Command("weth-deposit")
+  .description("Deposit ether into a weth contract to mint tokens")
+  .option("--amount <number>", "Amount of ether to include in the deposit")
+  .option(
+    "--wethAddress <address>",
+    "ERC20 contract address",
+    constants.WETH_ADDRESS
+  )
+  .action(async function (args) {
+    await setupParentArgs(args, args.parent.parent);
+
+    const wethInstance = new ethers.Contract(
+      args.wethAddress,
+      constants.ContractABIs.WETH.abi,
+      args.wallet
+    );
+    let tx = await wethInstance.deposit({
+      value: ethers.utils.parseEther(args.amount),
+      gasPrice: args.gasPrice,
+      gasLimit: args.gasLimit,
+    });
+    await waitForTx(args.provider, tx.hash);
+    const newBalance = await wethInstance.balanceOf(args.wallet.address);
+    const decimals = await wethInstance.decimals();
+    log(
+      args,
+      `Deposited ${args.amount} into ${
+        args.wethAddress
+      }. New Balance: ${ethers.utils.formatUnits(newBalance, decimals)}`
+    );
+  });
+
 const createErc20ProposalData = (amount, recipient, decimals) => {
   if (recipient.substr(0, 2) === "0x") {
     recipient = recipient.substr(2);
@@ -272,6 +304,7 @@ erc20Cmd.addCommand(approveCmd);
 erc20Cmd.addCommand(depositCmd);
 erc20Cmd.addCommand(balanceCmd);
 erc20Cmd.addCommand(allowanceCmd);
+erc20Cmd.addCommand(wethDepositCmd);
 erc20Cmd.addCommand(proposalDataHashCmd);
 
 module.exports = erc20Cmd;

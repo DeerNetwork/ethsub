@@ -41,7 +41,7 @@ export default class Sub {
       const header = await this.api.rpc.chain.getHeader(finalizedHash);
       const latestBlock = header.number.toNumber();
       if (latestBlock <= this.currentBlock) {
-        await sleep(2000);
+        await sleep(3000);
         continue;
       }
       await this.parseBlock();

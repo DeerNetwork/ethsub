@@ -15,11 +15,21 @@
       {
         "name": "token1",
         "type": "erc20",
-        "value": "0x0000000000000000000000000000009b35c2b05a300b65107a1b47a320f65f01"
+        "value": "0x000000000000000000000021605f71845f372A9ed84253d2D024B7B10999f400"
       }
     ]
   },
   "sub": {
-    "url": "ws://localhost:9944"
+    "chainId": 1,
+    "url": "ws://localhost:9944",
+    "secret": "//Alice",
+    "startBlock": 0,
+    "resourceIds": [
+      {
+        "name": "token1",
+        "type": "erc20",
+        "value": "0x0000000000000000000000000000009b35c2b05a300b65107a1b47a320f65f01"
+      }
+    ]
   }
 }

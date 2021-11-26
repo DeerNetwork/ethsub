@@ -212,7 +212,7 @@ const withdrawCmd = new Command("withdraw")
   )
   .option(
     "--tokenContract <address>",
-    "ERC20 token contract address",
+    "ERC20 or ERC721 token contract address",
     constants.ERC20_ADDRESS
   )
   .option(

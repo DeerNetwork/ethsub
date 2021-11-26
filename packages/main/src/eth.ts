@@ -61,7 +61,7 @@ export default class Eth {
     while (true) {
       const latestBlock = await this.provider.getBlockNumber();
       if (latestBlock - this.config.confirmBlocks - this.currentBlock <= 0) {
-        await sleep(2000);
+        await sleep(3000);
         continue;
       }
       await this.parseBlock();
@@ -93,10 +93,10 @@ export default class Eth {
       const msg: BridgeMsg = {
         source: this.config.chainId,
         destination: logDesc.args.destinationDomainID,
-        depositNonce: logDesc.args.depositNonce.toString(),
+        depositNonce: logDesc.args.depositNonce.toNumber(),
         type: resourceIdData.type,
-        resourceName: resourceIdData.name,
         resourceId: resourceIdData.value,
+        resourceName: resourceIdData.name,
         payload: parseDepositErc20(logDesc.args.data),
       };
       console.log(msg);
@@ -110,5 +110,5 @@ function parseDepositErc20(data: string) {
     ethers.utils.stripZeros(data.slice(0, 66))
   ).toString();
   const recipent = data.slice(130);
-  return { recipent, amount };
+  return { amount, recipent };
 }
