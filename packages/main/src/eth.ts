@@ -9,7 +9,7 @@ const EventSig = {
   Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
 };
 
-const CONTRACT_PATH = "ethsub-solidity/build/contracts";
+const CONTRACT_PATH = "ethsub-sol/build/contracts";
 
 const ContractABIs = {
   Bridge: require(CONTRACT_PATH + "/Bridge.json"),

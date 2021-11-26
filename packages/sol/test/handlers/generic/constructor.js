@@ -15,10 +15,10 @@ const ChainAssetContract = artifacts.require("ChainAsset");
 contract("GenericHandler - [constructor]", async () => {
   const relayerThreshold = 2;
   const domainID = 1;
-  const ChainAssetMinCount = 1;
+  const chainAssetMinCount = 1;
   const blankFunctionSig = "0x00000000";
   const blankFunctionDepositerOffset = 0;
-  const ChainAssetFuncSig = "store(bytes32)";
+  const chainAssetStoreFuncSig = "store(bytes32)";
 
   let BridgeInstance;
   let ChainAssetInstance1;
@@ -35,13 +35,13 @@ contract("GenericHandler - [constructor]", async () => {
       BridgeContract.new(domainID, [], relayerThreshold, 0, 100).then(
         (instance) => (BridgeInstance = instance)
       ),
-      ChainAssetContract.new(ChainAssetMinCount).then(
+      ChainAssetContract.new(chainAssetMinCount).then(
         (instance) => (ChainAssetInstance1 = instance)
       ),
-      ChainAssetContract.new(ChainAssetMinCount).then(
+      ChainAssetContract.new(chainAssetMinCount).then(
         (instance) => (ChainAssetInstance2 = instance)
       ),
-      ChainAssetContract.new(ChainAssetMinCount).then(
+      ChainAssetContract.new(chainAssetMinCount).then(
         (instance) => (ChainAssetInstance3 = instance)
       ),
     ]);
@@ -59,7 +59,7 @@ contract("GenericHandler - [constructor]", async () => {
 
     const executeProposalFuncSig = Ethers.utils
       .keccak256(
-        Ethers.utils.hexlify(Ethers.utils.toUtf8Bytes(ChainAssetFuncSig))
+        Ethers.utils.hexlify(Ethers.utils.toUtf8Bytes(chainAssetStoreFuncSig))
       )
       .substr(0, 10);
 

@@ -23,7 +23,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
 
   const initialRelayers = [relayer1Address, relayer2Address];
 
-  const ChainAssetMinCount = 10;
+  const chainAssetMinCount = 10;
   const hashOfChainAsset = Ethers.utils.keccak256("0xc0ffee");
 
   let BridgeInstance;
@@ -46,12 +46,12 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
         0,
         100
       ).then((instance) => (BridgeInstance = instance)),
-      ChainAssetContract.new(ChainAssetMinCount).then(
+      ChainAssetContract.new(chainAssetMinCount).then(
         (instance) => (ChainAssetInstance = instance)
       ),
     ]);
 
-    const ChainAssetFuncSig = Helpers.getFunctionSignature(
+    const chainAssetFuncSig = Helpers.getFunctionSignature(
       ChainAssetInstance,
       "store"
     );
@@ -63,7 +63,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
     initialDepositFunctionDepositerOffsets = [
       Helpers.blankFunctionDepositerOffset,
     ];
-    initialExecuteFunctionSignatures = [ChainAssetFuncSig];
+    initialExecuteFunctionSignatures = [chainAssetFuncSig];
 
     GenericHandlerInstance = await GenericHandlerContract.new(
       BridgeInstance.address
@@ -162,7 +162,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
 
     assert.isTrue(
       await ChainAssetInstance._assetsStored.call(hashOfChainAsset),
-      "Chain Asset was not successfully stored"
+      "Centrifuge Asset was not successfully stored"
     );
   });
 });

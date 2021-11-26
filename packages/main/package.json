@@ -13,7 +13,7 @@
     "@polkadot/keyring": "^7.9.2",
     "@polkadot/util-crypto": "^7.9.2",
     "ethers": "^5.5.1",
-    "ethsub-solidity": "workspace:^",
+    "ethsub-sol": "workspace:^",
     "winston": "^3.3.3"
   },
   "devDependencies": {

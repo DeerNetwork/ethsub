@@ -4,15 +4,19 @@
  */
 const BridgeContract = artifacts.require("Bridge");
 const ERC20HandlerContract = artifacts.require("ERC20Handler");
+const ERC721HandlerContract = artifacts.require("ERC721Handler");
+const ERC1155HandlerContract = artifacts.require("ERC1155Handler");
 const GenericHandlerContract = artifacts.require("GenericHandler");
 const ChainAssetContract = artifacts.require("ChainAsset");
 const HandlerHelpersContract = artifacts.require("HandlerHelpers");
 const ERC20SafeContract = artifacts.require("ERC20Safe");
+const ERC721SafeContract = artifacts.require("ERC721Safe");
+const ERC1155SafeContract = artifacts.require("ERC1155Safe");
 
 contract("Gas Benchmark - [contract deployments]", async () => {
   const domainID = 1;
   const relayerThreshold = 1;
-  const ChainAssetMinCount = 1;
+  const chainAssetMinCount = 1;
   const gasBenchmarks = [];
 
   let BridgeInstance;
@@ -26,10 +30,14 @@ contract("Gas Benchmark - [contract deployments]", async () => {
     contractInstances = contractInstances.concat(
       await Promise.all([
         ERC20HandlerContract.new(BridgeInstance.address),
+        ERC721HandlerContract.new(BridgeInstance.address),
+        ERC1155HandlerContract.new(BridgeInstance.address),
         GenericHandlerContract.new(BridgeInstance.address),
-        ChainAssetContract.new(ChainAssetMinCount),
+        ChainAssetContract.new(chainAssetMinCount),
         HandlerHelpersContract.new(BridgeInstance.address),
         ERC20SafeContract.new(),
+        ERC721SafeContract.new(),
+        ERC1155SafeContract.new(),
       ])
     );
 

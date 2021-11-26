@@ -1,3 +1,6 @@
+npm pkg +args:
+    pnpm --filter ./packages/{{pkg}} {{args}}
+
 sol-cli *args:
     -node packages/sol-cli/index.js {{args}}
 
@@ -8,10 +11,9 @@ run:
     rm -rf packages/main/data
     pnpm run --filter ./packages/main dev
 
-eth-run:
+eth-run +args='-b 3 -l 8000000':
     ganache-cli \
-        -b 3 \
-        -l 8000000 \
+        {{args}} \
         --account "0x000000000000000000000000000000000000000000000000000000616c696365,100000000000000000000" \
         --account "0x0000000000000000000000000000000000000000000000000000000000626f62,100000000000000000000" \
         --account "0x00000000000000000000000000000000000000000000000000636861726c6965,100000000000000000000" \

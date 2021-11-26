@@ -10,7 +10,8 @@ const blankFunctionDepositerOffset = 0;
 const AbiCoder = new Ethers.utils.AbiCoder();
 
 const toHex = (covertThis, padding) => {
-  return Ethers.utils.hexZeroPad(Ethers.utils.hexlify(covertThis), padding);
+  const value = Ethers.utils.hexlify(covertThis);
+  return padding > 0 ? Ethers.utils.hexZeroPad(value, padding) : value;
 };
 
 const abiEncode = (valueTypes, values) => {
@@ -76,6 +77,23 @@ const createERC1155WithdrawData = (
     ["address", "address", "uint[]", "uint[]", "bytes"],
     [tokenAddress, recipient, tokenIDs, amounts, transferData]
   );
+};
+
+const createERC721DepositProposalData = (
+  tokenAmountOrID,
+  lenRecipientAddress,
+  recipientAddress,
+  lenMetaData,
+  metaData
+) => {
+  return (
+    "0x" +
+    toHex(tokenAmountOrID, 32).substr(2) + // Token amount or ID to deposit (32 bytes)
+    toHex(lenRecipientAddress, 32).substr(2) + // len(recipientAddress)         (32 bytes)
+    recipientAddress.substr(2) + // recipientAddress              (?? bytes)
+    toHex(lenMetaData, 32).substr(2) + // len(metaData)                 (32 bytes)
+    toHex(metaData, lenMetaData).substr(2)
+  ); // metaData                      (?? bytes)
 };
 
 const advanceBlock = () => {
@@ -161,6 +179,7 @@ module.exports = {
   createERC1155DepositProposalData,
   createERC1155WithdrawData,
   createGenericDepositData,
+  createERC721DepositProposalData,
   createResourceID,
   assertObjectsMatch,
   nonceAndId,
