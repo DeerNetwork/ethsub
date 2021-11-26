@@ -4,6 +4,7 @@ import { config } from "./utils";
 
 export enum StoreKeys {
   ETH_BLOCKNUM = "ethBlockNum",
+  SUB_BLOCKNUM = "subBlockNum",
 }
 
 export class Store {
@@ -16,6 +17,14 @@ export class Store {
   }
   public async loadEthBlockNum(): Promise<number> {
     const buf = await this.readKeyFile(StoreKeys.ETH_BLOCKNUM);
+    if (!buf) return 0;
+    return parseInt(buf.toString("utf8")) || 0;
+  }
+  public async storeSubBlockNum(blockNum: number) {
+    await this.writeKeyFile(StoreKeys.SUB_BLOCKNUM, blockNum.toString());
+  }
+  public async loadSubBlockNum(): Promise<number> {
+    const buf = await this.readKeyFile(StoreKeys.SUB_BLOCKNUM);
     if (!buf) return 0;
     return parseInt(buf.toString("utf8")) || 0;
   }

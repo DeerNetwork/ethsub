@@ -37,10 +37,16 @@ importers:
     specifiers:
       '@ethersproject/abi': ^5.5.0
       '@ethersproject/providers': ^5.5.0
+      '@polkadot/api': ^6.9.2
+      '@polkadot/keyring': ^7.9.2
+      '@polkadot/util-crypto': ^7.9.2
       ethers: ^5.5.1
       ethsub-solidity: workspace:^
       winston: ^3.3.3
     dependencies:
+      '@polkadot/api': 6.9.2
+      '@polkadot/keyring': 7.9.2
+      '@polkadot/util-crypto': 7.9.2
       ethers: 5.5.1
       ethsub-solidity: link:../solidity
       winston: 3.3.3
@@ -73,11 +79,13 @@ importers:
     specifiers:
       '@polkadot/api': ^6.9.2
       '@polkadot/keyring': ^7.9.2
+      '@polkadot/util': ^7.9.2
       '@polkadot/util-crypto': ^7.9.2
       commander: ^5.0.0
     dependencies:
       '@polkadot/api': 6.9.2
       '@polkadot/keyring': 7.9.2
+      '@polkadot/util': 7.9.2
       '@polkadot/util-crypto': 7.9.2
       commander: 5.1.0
 

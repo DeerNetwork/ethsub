@@ -14,8 +14,15 @@ export interface BridgeMsg {
   destination: number;
   depositNonce: number;
   type: string;
-  resource: string;
+  resourceName: string;
+  resourceId: string;
   payload: any;
+}
+
+export interface ResourceIdConfig {
+  name: string;
+  value: string;
+  type: string;
 }
 
 export function getCtx() {
@@ -28,6 +35,6 @@ export default class Bridge {
     const eth = await Eth.init(config.eth);
     const sub = await Sub.init(config.sub);
     ctx = { eth, sub };
-    await eth.pullBlocks();
+    await Promise.all([eth.pullBlocks(), sub.pullBlocks()]);
   }
 }

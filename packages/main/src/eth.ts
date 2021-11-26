@@ -2,7 +2,7 @@ import { ethers, Wallet } from "ethers";
 import { Bridge } from "./contracts/Bridge";
 import { ERC20Handler } from "./contracts/ERC20Handler";
 import { logger, sleep } from "./utils";
-import { BridgeMsg } from "./bridge";
+import { BridgeMsg, ResourceIdConfig } from "./bridge";
 import store from "./store";
 
 const EventSig = {
@@ -27,12 +27,6 @@ export interface EthConfig {
     erc20Handler: string;
   };
   resourceIds: ResourceIdConfig[];
-}
-
-export interface ResourceIdConfig {
-  name: string;
-  value: string;
-  type: string;
 }
 
 export default class Eth {
@@ -67,7 +61,8 @@ export default class Eth {
     while (true) {
       const latestBlock = await this.provider.getBlockNumber();
       if (latestBlock - this.config.confirmBlocks - this.currentBlock <= 0) {
-        await sleep(6100);
+        await sleep(2000);
+        continue;
       }
       await this.parseBlock();
       await store.storeEthBlockNum(this.currentBlock);
@@ -77,12 +72,12 @@ export default class Eth {
     if (msg.type === "erc20") {
     } else if (msg.type === "generic") {
     } else {
-      throw new Error(`Writechain throw unknown msg type ${msg.type}`);
+      throw new Error(`Write eth throw unknown msg type ${msg.type}`);
     }
   }
   private async parseBlock() {
     const blockNum = this.currentBlock;
-    logger.debug(`Parse block ${blockNum}`);
+    logger.debug(`Parse eth block ${blockNum}`);
     const logs = await this.provider.getLogs({
       fromBlock: blockNum,
       toBlock: blockNum,
@@ -100,7 +95,8 @@ export default class Eth {
         destination: logDesc.args.destinationDomainID,
         depositNonce: logDesc.args.depositNonce.toString(),
         type: resourceIdData.type,
-        resource: resourceIdData.name,
+        resourceName: resourceIdData.name,
+        resourceId: resourceIdData.value,
         payload: parseDepositErc20(logDesc.args.data),
       };
       console.log(msg);

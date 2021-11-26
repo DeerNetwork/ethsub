@@ -37,9 +37,10 @@ eth-setup:
     just sol-cli erc20 add-minter --minter $CONTRACT_ERC20_HANDLER
 
 sub-setup:
-    just sub-cli --sudo bridge.addRelayer Alice
-    just sub-cli --sudo bridge.setResource $ERC20_RESOURCEID $PALLET_METHOD_TRANSFER
+    just sub-cli --sudo bridge.addRelayer $SUB_ACCOUNT
+    just sub-cli --sudo bridge.setResource $SUB_TOKEN_RESOURCEID $PALLET_METHOD_TRANSFER
     just sub-cli --sudo bridge.whitelistChain 0
+    just sub-cli --sudo bridgeTransfer.changeFee 1 1 0
 
 eth-transfer *mint:
     #!/bin/bash
@@ -47,7 +48,7 @@ eth-transfer *mint:
         just sol-cli erc20 mint --amount 1000
         just sol-cli erc20 approve --amount 1000 --recipient $CONTRACT_ERC20_HANDLER 
     fi
-    just sol-cli erc20 deposit --amount 1 --dest 1 --recipient $SUB_ADDRESS --resourceId $ERC20_RESOURCEID
+    just sol-cli erc20 deposit --amount 1 --dest 1 --recipient $SUB_ACCOUNT --resourceId $ERC20_RESOURCEID
 
 sub-transfer:
-    just sub-cli bridgeTransfer.transferNative 1000 $ETH_ADDRESS 0
+    just sub-cli bridgeTransfer.transferNative 1000 $ETH_ACCOUNT 0

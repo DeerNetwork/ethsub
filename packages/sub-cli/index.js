@@ -3,17 +3,18 @@
 const { cryptoWaitReady } = require("@polkadot/util-crypto");
 const { Keyring } = require("@polkadot/keyring");
 const { ApiPromise, WsProvider } = require("@polkadot/api");
+const { BN } = require("@polkadot/util");
 const { Command } = require("commander");
 
 const program = new Command()
   .arguments("<call> <callArgs...>")
   .option("--url <ws>", "websocket url", "ws://localhost:9944")
-  .option("--wallet <mnemonic>", "wallet mnemonic", "//Alice")
+  .option("--secret <mnemonic>", "account secret", "//Alice")
   .option("--sudo", "Sudo call")
-  .action((call, callArgs, program) => {
+  .action(async (call, callArgs, program) => {
     const options = program.opts();
-    main(call, callArgs, options);
-    console.log(call, callArgs, options);
+    await main(call, callArgs, options);
+    process.exit(0);
   });
 
 if (process.argv && process.argv.length <= 2) {
@@ -23,29 +24,46 @@ if (process.argv && process.argv.length <= 2) {
 }
 
 async function main(call, callArgs, options) {
-  await cryptoWaitReady();
   const api = new ApiPromise({
     provider: new WsProvider(options.url),
   });
-  const keyring = new Keyring();
-  const keyPair = keyring.addFromUri(options.mnemonic);
+  await api.isReady;
+  const wallet = await createWallet(options.secret);
   const callParts = call.split(".");
   const fn =
     retrivePart(api.tx, callParts) || retrivePart(api.query, callParts);
-  if (typeof fn === "function") {
-    if (fn.signAndSend) {
+  if (fn?.meta) {
+    const argLen = fn.meta.args.length;
+    if (callArgs.length !== argLen) {
+      throw new Error(`Invalid args`);
+    }
+    for (let i = 0; i < argLen; i++) {
+      const fnArg = fn.meta.args[i];
+      if (fnArg.typeName.toString() === "BalanceOf") {
+        callArgs[i] = new BN(callArgs[i])
+          .mul(new BN(10).pow(new BN(api.registry.chainDecimals[0])))
+          .toString();
+      }
+    }
+    if (!fn.key) {
       if (options.sudo) {
-        await sendTx(keyPair, api.tx.sudo.sudo(fn(...args)));
+        await sendTx(api, wallet, api.tx.sudo.sudo(fn(...callArgs)));
       } else {
-        await sendTx(keyPair, fn(...args));
+        await sendTx(api, wallet, fn(...callArgs));
       }
     } else {
-      const res = await fn(...args);
+      const res = await fn(...callArgs);
       console.log(JSON.stringify(res.toHuman(), null, 2));
     }
   } else {
-    throw new Error(`Invalid op ${call}`);
+    throw new Error(`Miss op ${call}`);
   }
+}
+
+async function createWallet(secret) {
+  await cryptoWaitReady();
+  const keyring = new Keyring({ type: "sr25519" });
+  return keyring.addFromUri(secret);
 }
 
 function retrivePart(scope, callParts) {
@@ -56,7 +74,7 @@ function retrivePart(scope, callParts) {
   return scope;
 }
 
-async function sendTx(keyPair, tx) {
+async function sendTx(api, keyPair, tx) {
   return new Promise((resolve, reject) => {
     tx.signAndSend(keyPair, ({ events = [], status }) => {
       if (status.isInvalid || status.isDropped || status.isUsurped) {
