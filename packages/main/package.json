@@ -13,7 +13,7 @@
     "@polkadot/keyring": "^7.9.2",
     "@polkadot/util-crypto": "^7.9.2",
     "@use-services/echo": "^1.1.0",
-    "@use-services/winston": "^1.0.0",
+    "@use-services/winston": "^1.2.0",
     "ethers": "^5.5.1",
     "ethsub-sol": "workspace:^",
     "lodash": "^4.17.21",

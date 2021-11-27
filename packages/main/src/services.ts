@@ -1,6 +1,4 @@
 import path from "path";
-import fs from "fs";
-import _ from "lodash";
 import useServices from "use-services";
 import * as Winston from "@use-services/winston";
 import * as Echo from "@use-services/echo";
@@ -8,6 +6,7 @@ import * as Store from "./store";
 import * as Eth from "./eth";
 import * as Sub from "./sub";
 import settings from "./settings";
+import { mergeJson } from "./utils";
 
 const options = {
   logger: {
@@ -56,15 +55,7 @@ const options = {
   } as Sub.Option<Sub.Service>,
 };
 
-mergeJson(options, "config.json");
+mergeJson(options, path.resolve(settings.baseDir, "config.json"));
 
 const { srvs, init } = useServices("ethsub", options);
 export { srvs, init };
-
-function mergeJson(data: any, file: string) {
-  file = path.resolve(settings.baseDir, file);
-  try {
-    const content = fs.readFileSync(file, "utf8");
-    _.merge(data, JSON.parse(content));
-  } catch (err) {}
-}

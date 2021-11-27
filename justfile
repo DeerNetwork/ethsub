@@ -48,7 +48,7 @@ init-sub:
 trans-eth:
     #!/bin/bash
     q=$(just sol-cli erc20 allowance)
-    if [[ "$q" =~ "0 tokens" ]]; then
+    if [[ "$q" =~ "spend 0 tokens" ]]; then
         just sol-cli erc20 mint --amount 1000
         just sol-cli erc20 approve --amount 1000 --recipient $ERC20_HANDLER_ADDRESS 
     fi

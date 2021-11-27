@@ -85,7 +85,7 @@ export class Service {
       await this.store.storeEthBlockNum(this.currentBlock);
     }
   }
-  public async writeMsg(msg: BridgeMsg) {
+  public async writeChain(msg: BridgeMsg) {
     if (msg.type === "erc20") {
     } else if (msg.type === "generic") {
     } else {
