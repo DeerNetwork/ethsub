@@ -24,7 +24,7 @@ const options = {
   store: {
     init: Store.init,
     args: {
-      baseDir: path.resolve(settings.baseDir, "data"),
+      dataDir: path.resolve(settings.baseDir, "data"),
     },
   } as Store.Option<Store.Service>,
   eth: {

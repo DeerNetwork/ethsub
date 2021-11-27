@@ -5,7 +5,8 @@ import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 export type Option<S extends Service> = ServiceOption<Args, S>;
 
 export interface Args {
-  baseDir: string;
+  dataDir: string;
+  enable: boolean;
 }
 
 export async function init<S extends Service>(
@@ -22,12 +23,12 @@ export enum StoreKeys {
 }
 
 export class Service {
-  private dataDir: string;
+  private args: Args;
   public constructor(option: InitOption<Args, Service>) {
-    this.dataDir = option.args.baseDir;
+    this.args = option.args;
   }
   public async [INIT_KEY]() {
-    await fs.promises.mkdir(this.dataDir, { recursive: true });
+    await fs.promises.mkdir(this.args.dataDir, { recursive: true });
   }
   public async storeEthBlockNum(blockNum: number) {
     await this.writeKeyFile(StoreKeys.ETH_BLOCKNUM, blockNum.toString());
@@ -54,10 +55,11 @@ export class Service {
     }
   }
   private async writeKeyFile(key: StoreKeys, data: string | Buffer) {
+    if (!this.args.enable) return;
     const keyFile = this.getKeyFile(key);
     await fs.promises.writeFile(keyFile, data);
   }
   private getKeyFile(key: StoreKeys) {
-    return path.resolve(this.dataDir, key);
+    return path.resolve(this.args.dataDir, key);
   }
 }
