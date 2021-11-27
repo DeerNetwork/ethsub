@@ -27,6 +27,13 @@ export interface Args {
   confirmBlocks: number;
   startBlock: number;
   privateKey: string;
+  gasLimit: number;
+  maxGasPrice: number;
+  minGasPrice: number;
+  gasMultiplier: number;
+  // The speed which a transaction should be processed: average, fast, fastest. Default: fast
+  egsSpeed?: string;
+  egsApiKey?: string;
   contracts: {
     bridge: string;
     erc20Handler: string;
@@ -48,6 +55,7 @@ export class Service {
   private wallet: Wallet;
   private store: StoreService;
   private bridge: Bridge;
+  private gasPrice: number;
   private erc20Handler: ERC20Handler;
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
@@ -55,6 +63,7 @@ export class Service {
     }
     this.store = option.deps[0];
     this.args = option.args;
+    this.gasPrice = option.args.maxGasPrice;
   }
   public async [INIT_KEY]() {
     const { url, startBlock, privateKey, contracts } = this.args;
@@ -95,7 +104,7 @@ export class Service {
   }
   private async parseBlock() {
     const blockNum = this.currentBlock;
-    srvs.logger.info(`Parse eth block ${blockNum}`);
+    srvs.logger.debug(`Parse eth block ${blockNum}`);
     const logs = await this.provider.getLogs({
       fromBlock: blockNum,
       toBlock: blockNum,
@@ -126,41 +135,53 @@ export class Service {
       resource,
       payload: { recipient, amount },
     } = msg;
-    srvs.logger.info(`Write erc20 propsoal`, { source, nonce });
-    const realAmount = exchangeAmountDecimals(
-      amount,
-      resource.sub.decimals,
-      resource.eth.decimals
-    );
-    const data =
-      "0x" +
-      ethers.utils
-        .hexZeroPad(ethers.BigNumber.from(realAmount).toHexString(), 32)
-        .substr(2) + // Deposit Amount        (32 bytes)
-      ethers.utils
-        .hexZeroPad(ethers.utils.hexlify((recipient.length - 2) / 2), 32)
-        .substr(2) + // len(recipientAddress) (32 bytes)
-      recipient.substr(2); // recipientAddress      (?? bytes)
+    const logCtx = { source, nonce };
+    try {
+      srvs.logger.info(`Write erc20 propsoal`, logCtx);
+      const realAmount = exchangeAmountDecimals(
+        amount,
+        resource.sub.decimals,
+        resource.eth.decimals
+      );
+      const data =
+        "0x" +
+        ethers.utils
+          .hexZeroPad(ethers.BigNumber.from(realAmount).toHexString(), 32)
+          .substr(2) + // Deposit Amount        (32 bytes)
+        ethers.utils
+          .hexZeroPad(ethers.utils.hexlify((recipient.length - 2) / 2), 32)
+          .substr(2) + // len(recipientAddress) (32 bytes)
+        recipient.substr(2); // recipientAddress      (?? bytes)
 
-    const dataHash = ethers.utils.solidityKeccak256(
-      ["address", "bytes"],
-      [this.erc20Handler.address, data]
-    );
+      const dataHash = ethers.utils.solidityKeccak256(
+        ["address", "bytes"],
+        [this.erc20Handler.address, data]
+      );
 
-    const should = await this.shouldVote(msg, dataHash);
-    if (!should) {
-      const pass = await this.proposalIsPassed(msg, dataHash);
-      if (pass) {
-        await this.executeProposal(msg, data, dataHash);
-        return true;
-      } else {
-        return false;
+      let proposal = await this.getProposal(msg, dataHash);
+      if (proposal._status === 3 || proposal._status === 4) {
+        srvs.logger.info(`Proposal complete, skip voting`, logCtx);
+        return;
+      } else if (proposal._status === 0) {
+        srvs.logger.info(`Proposal vote`, logCtx);
+        await this.voteProposal(msg, data, dataHash);
+      } else if (proposal._status === 1) {
+        const voted = await this.hasVoted(msg, dataHash);
+        if (voted) {
+          srvs.logger.info(`Relayer has already voted`, logCtx);
+          return;
+        }
+        await this.voteProposal(msg, data, dataHash);
+        srvs.logger.info(`Proposal vote`, logCtx);
       }
+      proposal = await this.getProposal(msg, dataHash);
+      if (proposal._status === 2) {
+        await this.executeProposal(msg, data);
+        srvs.logger.info(`Proposal execute`, logCtx);
+      }
+    } catch (err) {
+      srvs.logger.error(err, logCtx);
     }
-
-    await this.voteProposal(msg, dataHash);
-
-    return true;
   }
 
   private parseErc20(
@@ -183,20 +204,12 @@ export class Service {
     return msg;
   }
 
-  private async shouldVote(msg: BridgeMsg, dataHash: string) {
-    const { source, nonce } = msg;
-    const isComplete = await this.proposalIsComplete(msg, dataHash);
-    const logCtx = { source, nonce };
-    if (isComplete) {
-      srvs.logger.info(`Proposal complete, not voting`, logCtx);
-      return false;
+  private async waitTx(tx: ethers.ContractTransaction) {
+    try {
+      await tx.wait(this.args.confirmBlocks);
+    } catch (err) {
+      throw new Error(`Transaction ${tx.hash} throw`);
     }
-    const voted = await this.hasVoted(msg, dataHash);
-    if (voted) {
-      srvs.logger.info(`Relayer has already voted`, logCtx);
-      return false;
-    }
-    return true;
   }
 
   private async hasVoted(msg: BridgeMsg, dataHash: string) {
@@ -207,34 +220,20 @@ export class Service {
     );
   }
 
-  private async voteProposal(msg: BridgeMsg, dataHash: string) {
-    const { source, destination, nonce, resource } = msg;
+  private async voteProposal(msg: BridgeMsg, data: string, dataHash: string) {
+    const { source, nonce, resource } = msg;
     const {
       eth: { resourceId },
     } = resource;
-    const tx = await this.bridge.voteProposal(
-      source,
-      nonce,
-      resourceId,
-      dataHash
-    );
-    await this.waitForTx(tx.hash);
-    const isComplete = await this.proposalIsComplete(msg, dataHash);
-    if (isComplete) {
-      srvs.logger.info("Proposal voting complete on chain", {
-        source,
-        nonce,
-        destination,
-      });
-    }
+    const tx = await this.bridge.voteProposal(source, nonce, resourceId, data, {
+      gasLimit: this.args.gasLimit,
+      gasPrice: this.gasPrice,
+    });
+    await this.waitTx(tx);
   }
 
-  private async executeProposal(
-    msg: BridgeMsg,
-    data: string,
-    dataHash: string
-  ) {
-    const { source, nonce, destination, resource } = msg;
+  private async executeProposal(msg: BridgeMsg, data: string) {
+    const { source, nonce, resource } = msg;
     const {
       eth: { resourceId },
     } = resource;
@@ -243,44 +242,17 @@ export class Service {
       nonce,
       data,
       resourceId,
-      true
+      true,
+      {
+        gasLimit: this.args.gasLimit,
+        gasPrice: this.gasPrice,
+      }
     );
-    await this.waitForTx(tx.hash);
-    const isFinalized = await this.proposalIsFinalized(msg, dataHash);
-    if (isFinalized) {
-      srvs.logger.info("Proposal finalized on chain", {
-        source,
-        nonce,
-        destination,
-      });
-    }
-  }
-
-  private async proposalIsComplete(msg: BridgeMsg, dataHash: string) {
-    const prop = await this.getProposal(msg, dataHash);
-    return prop._status === 2 || prop._status === 3 || prop._status === 4;
-  }
-
-  private async proposalIsPassed(msg: BridgeMsg, dataHash: string) {
-    const prop = await this.getProposal(msg, dataHash);
-    return prop._status === 2;
-  }
-
-  private async proposalIsFinalized(msg: BridgeMsg, dataHash: string) {
-    const prop = await this.getProposal(msg, dataHash);
-    return prop._status === 3 || prop._status === 4;
+    await this.waitTx(tx);
   }
 
   private getProposal(msg: BridgeMsg, dataHash: string) {
     return this.bridge.getProposal(msg.source, msg.nonce, dataHash);
-  }
-
-  async waitForTx(hash: string) {
-    while (true) {
-      const receipt = await this.provider.getTransactionReceipt(hash);
-      if (receipt) break;
-      await sleep(5000);
-    }
   }
 
   private idAndNonce(msg: BridgeMsg) {

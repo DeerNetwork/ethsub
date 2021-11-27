@@ -33,19 +33,19 @@ async function main(call, callArgs, options) {
   const fn =
     retrivePart(api.tx, callParts) || retrivePart(api.query, callParts);
   if (fn?.meta) {
-    const argLen = fn.meta.args.length;
-    if (callArgs.length !== argLen) {
-      throw new Error(`Invalid args`);
-    }
-    for (let i = 0; i < argLen; i++) {
-      const fnArg = fn.meta.args[i];
-      if (fnArg.typeName.toString() === "BalanceOf") {
-        callArgs[i] = new BN(callArgs[i])
-          .mul(new BN(10).pow(new BN(api.registry.chainDecimals[0])))
-          .toString();
-      }
-    }
     if (!fn.key) {
+      const argLen = fn.meta.args.length;
+      if (callArgs.length !== argLen) {
+        throw new Error(`Invalid args`);
+      }
+      for (let i = 0; i < argLen; i++) {
+        const fnArg = fn.meta.args[i];
+        if (/Balance/.test(fnArg.typeName.toString())) {
+          callArgs[i] = new BN(callArgs[i])
+            .mul(new BN(10).pow(new BN(api.registry.chainDecimals[0])))
+            .toString();
+        }
+      }
       if (options.sudo) {
         await sendTx(api, wallet, api.tx.sudo.sudo(fn(...callArgs)));
       } else {

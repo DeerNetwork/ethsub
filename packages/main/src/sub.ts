@@ -5,8 +5,6 @@ import { Keyring } from "@polkadot/keyring";
 import { KeyringPair } from "@polkadot/keyring/types";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { DispatchError, Event } from "@polkadot/types/interfaces";
-import _ from "lodash";
-import { BN } from "@polkadot/util";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmountDecimals, sleep } from "./utils";
@@ -81,7 +79,7 @@ export class Service {
   private async parseBlock() {
     const blockNum = this.currentBlock;
     const blockHash = await this.api.rpc.chain.getBlockHash(blockNum);
-    srvs.logger.info(`Parse sub block ${blockNum}`);
+    srvs.logger.debug(`Parse sub block ${blockNum}`);
     const events = await this.api.query.system.events.at(blockHash);
     for (const evt of events) {
       let msg: BridgeMsg;
@@ -109,34 +107,44 @@ export class Service {
       resource,
       payload: { recipient, amount },
     } = msg;
-    const logCtx = { source, nonce, resource };
-    srvs.logger.info(`Write erc20 propsoal`, logCtx);
-    const {
-      sub: { resourceId },
-    } = resource;
-    const maybeMethod = await this.api.query.bridge.resources(resourceId);
-    if (maybeMethod.isNone) {
-      throw new Error(`Resource ${resource.name} not found on eth chain`);
+    const logCtx = { source, nonce };
+    try {
+      srvs.logger.info(`Write erc20 propsoal`, logCtx);
+      const {
+        sub: { resourceId },
+      } = resource;
+      const maybeMethod = await this.api.query.bridge.resources(resourceId);
+      if (maybeMethod.isNone) {
+        throw new Error(`Resource ${resource.name} not found on eth chain`);
+      }
+      const realAmount = exchangeAmountDecimals(
+        amount,
+        resource.eth.decimals,
+        resource.sub.decimals
+      );
+      const method = maybeMethod.unwrap().toUtf8();
+      if (method !== "bridgeTransfer.transfer") {
+        throw new Error(
+          `Resource ${resource.name} with invalid method ${method}`
+        );
+      }
+      const call = this.api.tx.bridgeTransfer.transfer(
+        "0x" + recipient,
+        realAmount,
+        resource.sub.resourceId
+      );
+      const should = await this.shouldProposal(msg, call);
+      if (!should) {
+        srvs.logger.info(`Ignoring proposal`, logCtx);
+        return false;
+      }
+      await this.sendTx(
+        this.api.tx.bridge.acknowledgeProposal(nonce, source, resourceId, call)
+      );
+      srvs.logger.info(`Acknowledging proposal on chain`, logCtx);
+    } catch (err) {
+      srvs.logger.error(err, logCtx);
     }
-    const realAmount = exchangeAmountDecimals(
-      amount,
-      resource.eth.decimals,
-      resource.sub.decimals
-    );
-    const method = maybeMethod.unwrap();
-    const call: SubmittableExtrinsic = (
-      _.get(this.api.tx, method.toString()) as any
-    )(...[new BN(realAmount), recipient, source]);
-    const should = await this.shouldProposal(msg, call);
-    if (!should) {
-      srvs.logger.info(`Ignoring proposal`, logCtx);
-      return false;
-    }
-    srvs.logger.info(`Acknowledging proposal on chain`, logCtx);
-    await this.sendTx(
-      this.api.tx.bridge.acknowledgeProposal(nonce, source, resourceId, call)
-    );
-    return true;
   }
 
   private parseErc20(event: Event, resourceData: ResourceData) {
@@ -159,7 +167,7 @@ export class Service {
     msg: BridgeMsgErc20,
     call: SubmittableExtrinsic
   ) {
-    const { source, nonce, resource } = msg;
+    const { source, nonce } = msg;
     const maybeVote = await this.api.query.bridge.votes(msg.source, [
       msg.nonce,
       call,
@@ -173,12 +181,12 @@ export class Service {
         vote.votesFor.find((v) => v.eq(this.wallet.address)) ||
         vote.votesAgainst.find((v) => v.eq(this.wallet.address))
       ) {
-        srvs.logger.info("proposal voted", { source, nonce, resource });
+        srvs.logger.info("Proposal voted", { source, nonce });
         return false;
       }
       return true;
     } else {
-      srvs.logger.info("proposal complete", { source, nonce, resource });
+      srvs.logger.info("Proposal complete", { source, nonce });
       return false;
     }
   }
@@ -225,6 +233,6 @@ export class Service {
 
 async function createWallet(privateKey: string) {
   await cryptoWaitReady();
-  const keyring = new Keyring();
+  const keyring = new Keyring({ type: "sr25519" });
   return keyring.addFromUri(privateKey);
 }

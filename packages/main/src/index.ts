@@ -13,7 +13,8 @@ async function main() {
   let stop;
   try {
     stop = await init();
-    await Promise.all([srvs.eth.pullBlocks(), srvs.sub.pullBlocks()]);
+    Promise.all([srvs.eth.pullBlocks(), srvs.sub.pullBlocks()]);
+    srvs.logger.info("Bridge started");
     await Promise.race([
       ...["SIGINT", "SIGHUP", "SIGTERM"].map((s) =>
         pEvent(

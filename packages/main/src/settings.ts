@@ -1,6 +1,7 @@
 import { ResourceData, ResourceType } from "./types";
 
 const settings = {
+  app: "ethsub",
   baseDir: process.env.BASE_DIR || process.cwd(),
   dataDir: "data",
   resources: [
@@ -15,7 +16,7 @@ const settings = {
       sub: {
         resourceId:
           "0x0000000000000000000000000000009b35c2b05a300b65107a1b47a320f65f01",
-        decimals: 10,
+        decimals: 12,
       },
     },
   ] as ResourceData[],

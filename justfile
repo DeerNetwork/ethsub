@@ -38,21 +38,24 @@ init-eth:
     just sol-cli bridge register-resource --resourceId $ERC20_RESOURCEID --targetContract $ERC20_ADDRESS
     just sol-cli bridge set-burn --tokenContract $ERC20_ADDRESS
     just sol-cli erc20 add-minter --minter $ERC20_HANDLER_ADDRESS
+    just sol-cli erc20 mint --amount 100000
+    just sol-cli erc20 approve --amount 100000 --recipient $ERC20_HANDLER_ADDRESS 
 
 init-sub:
-    just sub-cli --sudo bridge.addRelayer $SUB_ACCOUNT_ADDRESS
+    just sub-cli --sudo bridge.addRelayer $SUB_ALICE_ADDRESS
     just sub-cli --sudo bridge.setResource $SUB_TOKEN_RESOURCEID $PALLET_TRANSFER_METHOD
     just sub-cli --sudo bridge.whitelistChain 0
     just sub-cli --sudo bridgeTransfer.changeFee 1 1 0
+    just sub-cli balances.transfer $SUB_BRIDGE_ACCOUNT 10000
 
-trans-eth:
-    #!/bin/bash
-    q=$(just sol-cli erc20 allowance)
-    if [[ "$q" =~ "spend 0 tokens" ]]; then
-        just sol-cli erc20 mint --amount 1000
-        just sol-cli erc20 approve --amount 1000 --recipient $ERC20_HANDLER_ADDRESS 
-    fi
-    just sol-cli erc20 deposit --amount 1 --dest 1 --recipient $SUB_ACCOUNT_ADDRESS --resourceId $ERC20_RESOURCEID
+trans-eth amount="100" to="$SUB_BOB_ADDRESS":
+    just sol-cli erc20 deposit --dest 1 --resourceId $ERC20_RESOURCEID --amount {{amount}} --recipient {{to}} 
 
-trans-sub:
-    just sub-cli bridgeTransfer.transferNative 1000 $ETH_ACCOUNT_ADDRESS 0
+trans-sub amount="100" to="$ETH_BOB_ADDRESS":
+    just sub-cli bridgeTransfer.transferNative {{amount}} {{to}} 0
+
+balance-eth account="$ETH_BOB_ADDRESS":
+    just sol-cli erc20 balance --address {{account}}
+
+balance-sub account="$SUB_BOB_ADDRESS":
+    just sub-cli system.account {{account}}

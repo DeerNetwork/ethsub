@@ -33,10 +33,14 @@ const options = {
     args: {
       chainId: 0,
       url: "ws://localhost:8545",
-      confirmBlocks: 1,
+      confirmBlocks: 6,
       startBlock: 0,
       privateKey:
         "0x000000000000000000000000000000000000000000000000000000616c696365",
+      gasLimit: 6721975,
+      maxGasPrice: 20000000000,
+      minGasPrice: 0,
+      gasMultiplier: 1,
       contracts: {
         bridge: "0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B",
         erc20Handler: "0x3167776db165D8eA0f51790CA2bbf44Db5105ADF",
@@ -57,5 +61,5 @@ const options = {
 
 mergeJson(options, path.resolve(settings.baseDir, "config.json"));
 
-const { srvs, init } = useServices("ethsub", options);
+const { srvs, init } = useServices(settings.app, options);
 export { srvs, init };
