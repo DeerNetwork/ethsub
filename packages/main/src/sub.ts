@@ -2,9 +2,11 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Keyring } from "@polkadot/keyring";
 import { KeyringPair } from "@polkadot/keyring/types";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { Event } from "@polkadot/types/interfaces";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
-import { sleep, BridgeMsg } from "./utils";
+import { sleep } from "./utils";
+import { BridgeMsg, ResourceType } from "./types";
 import { srvs } from "./services";
 
 export type Deps = [StoreService];
@@ -69,31 +71,38 @@ export class Service {
     srvs.logger.debug(`Parse sub block ${blockNum}`);
     const events = await this.api.query.system.events.at(blockHash);
     for (const evt of events) {
+      let msg: BridgeMsg;
       const { event } = evt;
-      if (event.section === "bridge") {
-        if (event.method === "FungibleTransfer") {
-          const resourceId = event.data[2].toString();
-          const resourceIdData = srvs.settings.resources.find(
-            (v) => v.sub === resourceId
-          );
-          if (!resourceIdData) continue;
-          const destination = parseInt(event.data[0].toString());
-          const depositNonce = parseInt(event.data[1].toString());
-          const amount = event.data[3].toString();
-          const recipent = event.data[4].toString();
-          const msg: BridgeMsg = {
-            source: this.args.chainId,
-            destination,
-            depositNonce,
-            type: resourceIdData.type,
-            resource: resourceIdData.name,
-            payload: { amount, recipent },
-          };
-          console.log(msg);
-        }
+      if (event.section !== "bridge") continue;
+      if (event.method === "FungibleTransfer") {
+        const resourceId = event.data[2].toString();
+        const resourceIdData = srvs.settings.resources.find(
+          (v) => v.sub === resourceId
+        );
+        if (!resourceIdData) continue;
+        msg = this.parseErc20(event, resourceIdData.name);
+      } else {
+        continue;
       }
+      console.log(msg);
     }
     this.currentBlock += 1;
+  }
+
+  private parseErc20(event: Event, name: string) {
+    const destination = parseInt(event.data[0].toString());
+    const depositNonce = parseInt(event.data[1].toString());
+    const amount = event.data[3].toString();
+    const recipent = event.data[4].toString();
+    const msg: BridgeMsg = {
+      source: this.args.chainId,
+      destination,
+      depositNonce,
+      type: ResourceType.ERC20,
+      resource: name,
+      payload: { amount, recipent },
+    };
+    return msg;
   }
 }
 

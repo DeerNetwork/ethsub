@@ -3,7 +3,8 @@ import { Bridge } from "ethsub-sol/build/ethers/Bridge";
 import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
-import { sleep, BridgeMsg } from "./utils";
+import { sleep } from "./utils";
+import { BridgeMsg, ResourceType } from "./types";
 import { srvs } from "./services";
 
 export type Deps = [StoreService];
@@ -86,8 +87,7 @@ export class Service {
     }
   }
   public async writeChain(msg: BridgeMsg) {
-    if (msg.type === "erc20") {
-    } else if (msg.type === "generic") {
+    if (msg.type === ResourceType.ERC20) {
     } else {
       throw new Error(`Write eth throw unknown msg type ${msg.type}`);
     }
@@ -107,24 +107,31 @@ export class Service {
         (v) => v.eth.toLowerCase() === logDesc.args.resourceID
       );
       if (!resourceIdData) continue;
-      const msg: BridgeMsg = {
-        source: this.args.chainId,
-        destination: logDesc.args.destinationDomainID,
-        depositNonce: logDesc.args.depositNonce.toNumber(),
-        type: resourceIdData.type,
-        resource: resourceIdData.name,
-        payload: parseDepositErc20(logDesc.args.data),
-      };
+      let msg: BridgeMsg;
+      if (resourceIdData.type === ResourceType.ERC20) {
+        msg = this.parseErc20(logDesc, resourceIdData.name);
+      } else {
+        continue;
+      }
       console.log(msg);
     }
     this.currentBlock += 1;
   }
-}
 
-function parseDepositErc20(data: string) {
-  const amount = ethers.BigNumber.from(
-    ethers.utils.stripZeros(data.slice(0, 66))
-  ).toString();
-  const recipent = data.slice(130);
-  return { amount, recipent };
+  private parseErc20(log: ethers.utils.LogDescription, name: string) {
+    const { data, destinationDomainID, depositNonce } = log.args;
+    const amount = ethers.BigNumber.from(
+      ethers.utils.stripZeros(data.slice(0, 66))
+    ).toString();
+    const recipent = data.slice(130);
+    const msg: BridgeMsg = {
+      source: this.args.chainId,
+      destination: destinationDomainID,
+      depositNonce: depositNonce.toNumber(),
+      type: ResourceType.ERC20,
+      resource: name,
+      payload: { amount, recipent },
+    };
+    return msg;
+  }
 }
