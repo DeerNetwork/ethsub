@@ -4,7 +4,13 @@ import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
-import { BridgeMsg, BridgeMsgErc20, ResourceData, ResourceType } from "./types";
+import {
+  BridgeMsg,
+  BridgeMsgErc20,
+  BridgeMsgStatus,
+  ResourceData,
+  ResourceType,
+} from "./types";
 import { srvs } from "./services";
 
 export type Deps = [StoreService];
@@ -45,6 +51,8 @@ export async function init<S extends Service>(
 }
 
 export class Service {
+  public chainId: number;
+
   private provider: ethers.providers.WebSocketProvider;
   private args: Args;
   private latestBlockNum: number;
@@ -54,13 +62,16 @@ export class Service {
   private bridge: Bridge;
   private gasOpts: ethers.providers.FeeData;
   private erc20Handler: ERC20Handler;
+
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
       throw new Error("miss deps [store]");
     }
     this.store = option.deps[0];
     this.args = option.args;
+    this.chainId = this.args.chainId;
   }
+
   public async [INIT_KEY]() {
     const { url, startBlock, privateKey, contracts } = this.args;
     this.provider = new ethers.providers.WebSocketProvider(url);
@@ -81,6 +92,7 @@ export class Service {
     );
     this.latestBlockNum = 0;
   }
+
   public async pullBlocks() {
     this.subscribeLatestBlock();
     while (true) {
@@ -93,7 +105,24 @@ export class Service {
       await this.store.storeEthBlockNum(this.currentBlockNum);
     }
   }
-  public async writeChain(msg: BridgeMsg) {
+
+  public async pullMsgs(source: number) {
+    while (true) {
+      const msg = await this.store.nextMsg(source, this.chainId);
+      if (!msg) {
+        await sleep(3000);
+        continue;
+      }
+      const ok = await this.writeChain(msg);
+      if (ok) {
+        await srvs.store.storeMsgStatus(msg, BridgeMsgStatus.Success);
+      } else {
+        await srvs.store.storeMsgStatus(msg, BridgeMsgStatus.Fail);
+      }
+    }
+  }
+
+  private async writeChain(msg: BridgeMsg) {
     const { source, nonce } = msg;
     const logCtx = { source, nonce };
     try {
@@ -106,8 +135,8 @@ export class Service {
       const { data, dataHash } = proposalData;
       let proposal = await this.getProposal(msg, dataHash);
       if (proposal._status === 3 || proposal._status === 4) {
-        srvs.logger.info(`Proposal complete, skip voting`, logCtx);
-        return;
+        srvs.logger.info(`Proposal completed, skip voting`, logCtx);
+        return true;
       } else if (proposal._status === 0) {
         srvs.logger.info(`Proposal vote`, logCtx);
         await this.voteProposal(msg, data, dataHash);
@@ -115,7 +144,7 @@ export class Service {
         const voted = await this.hasVoted(msg, dataHash);
         if (voted) {
           srvs.logger.info(`Relayer has already voted`, logCtx);
-          return;
+          return true;
         }
         await this.voteProposal(msg, data, dataHash);
         srvs.logger.info(`Proposal vote`, logCtx);
@@ -125,8 +154,10 @@ export class Service {
         await this.executeProposal(msg, data);
         srvs.logger.info(`Proposal execute`, logCtx);
       }
+      return true;
     } catch (err) {
       srvs.logger.error(err, logCtx);
+      return false;
     }
   }
 
@@ -163,7 +194,7 @@ export class Service {
       } else {
         continue;
       }
-      await srvs.sub.writeChain(msg);
+      await srvs.store.storeMsg(msg);
     }
     this.currentBlockNum += 1;
   }

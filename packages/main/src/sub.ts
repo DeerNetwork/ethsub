@@ -10,7 +10,13 @@ import _ from "lodash";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
-import { BridgeMsg, ResourceType, BridgeMsgErc20, ResourceData } from "./types";
+import {
+  BridgeMsg,
+  ResourceType,
+  BridgeMsgErc20,
+  ResourceData,
+  BridgeMsgStatus,
+} from "./types";
 import { srvs } from "./services";
 
 export type Deps = [StoreService];
@@ -32,18 +38,23 @@ export async function init<S extends Service>(
 }
 
 export class Service {
+  public chainId: number;
+
   private api: ApiPromise;
   private args: Args;
   private currentBlock: number;
   private store: StoreService;
   private wallet: KeyringPair;
+
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
       throw new Error("miss deps [store]");
     }
     this.store = option.deps[0];
     this.args = option.args;
+    this.chainId = this.args.chainId;
   }
+
   public async [INIT_KEY]() {
     this.api = new ApiPromise({
       provider: new WsProvider(this.args.url),
@@ -70,7 +81,23 @@ export class Service {
     }
   }
 
-  public async writeChain(msg: BridgeMsg) {
+  public async pullMsgs(source: number) {
+    while (true) {
+      const msg = await this.store.nextMsg(source, this.chainId);
+      if (!msg) {
+        await sleep(3000);
+        continue;
+      }
+      const ok = await this.writeChain(msg);
+      if (ok) {
+        await srvs.store.storeMsgStatus(msg, BridgeMsgStatus.Success);
+      } else {
+        await srvs.store.storeMsgStatus(msg, BridgeMsgStatus.Fail);
+      }
+    }
+  }
+
+  private async writeChain(msg: BridgeMsg) {
     const { source, nonce, resource } = msg;
     const logCtx = { source, nonce };
     try {
@@ -92,8 +119,7 @@ export class Service {
       }
       const should = await this.shouldProposal(msg, callData);
       if (!should) {
-        srvs.logger.info(`Proposal ignoring`, logCtx);
-        return false;
+        return true;
       }
       await this.sendTx(
         this.api.tx.bridge.acknowledgeProposal(
@@ -104,8 +130,10 @@ export class Service {
         )
       );
       srvs.logger.info(`Proposal acknowledge`, logCtx);
+      return true;
     } catch (err) {
       srvs.logger.error(err, logCtx);
+      return false;
     }
   }
 
@@ -128,7 +156,7 @@ export class Service {
       } else {
         continue;
       }
-      await srvs.eth.writeChain(msg);
+      await srvs.store.storeMsg(msg);
     }
     this.currentBlock += 1;
   }
@@ -193,7 +221,7 @@ export class Service {
       }
       return true;
     } else {
-      srvs.logger.info("Proposal complete", { source, nonce });
+      srvs.logger.info("Proposal completed", { source, nonce });
       return false;
     }
   }

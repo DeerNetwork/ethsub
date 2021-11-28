@@ -13,7 +13,12 @@ async function main() {
   let stop;
   try {
     stop = await init();
-    Promise.all([srvs.eth.pullBlocks(), srvs.sub.pullBlocks()]);
+    Promise.all([
+      srvs.eth.pullBlocks(),
+      srvs.sub.pullBlocks(),
+      srvs.eth.pullMsgs(srvs.sub.chainId),
+      srvs.sub.pullMsgs(srvs.eth.chainId),
+    ]);
     srvs.logger.info("Bridge started");
     await Promise.race([
       ...["SIGINT", "SIGHUP", "SIGTERM"].map((s) =>

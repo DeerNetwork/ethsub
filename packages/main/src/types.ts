@@ -39,3 +39,9 @@ export enum ResourceType {
   ERC20 = "erc20",
   GENERIC = "generic",
 }
+
+export enum BridgeMsgStatus {
+  Pending,
+  Success,
+  Fail,
+}
