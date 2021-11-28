@@ -14,6 +14,8 @@ const EventSig = {
   Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
 };
 
+const { BigNumber } = ethers;
+
 const CONTRACT_PATH = "ethsub-sol/build/contracts";
 
 const ContractABIs = {
@@ -28,12 +30,6 @@ export interface Args {
   startBlock: number;
   privateKey: string;
   gasLimit: number;
-  maxGasPrice: number;
-  minGasPrice: number;
-  gasMultiplier: number;
-  // The speed which a transaction should be processed: average, fast, fastest. Default: fast
-  egsSpeed?: string;
-  egsApiKey?: string;
   contracts: {
     bridge: string;
     erc20Handler: string;
@@ -51,11 +47,12 @@ export async function init<S extends Service>(
 export class Service {
   private provider: ethers.providers.WebSocketProvider;
   private args: Args;
-  private currentBlock: number;
+  private latestBlockNum: number;
+  private currentBlockNum: number;
   private wallet: Wallet;
   private store: StoreService;
   private bridge: Bridge;
-  private gasPrice: number;
+  private gasOpts: ethers.providers.FeeData;
   private erc20Handler: ERC20Handler;
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
@@ -63,7 +60,6 @@ export class Service {
     }
     this.store = option.deps[0];
     this.args = option.args;
-    this.gasPrice = option.args.maxGasPrice;
   }
   public async [INIT_KEY]() {
     const { url, startBlock, privateKey, contracts } = this.args;
@@ -79,20 +75,22 @@ export class Service {
       ContractABIs.Erc20Handler.abi,
       this.wallet
     ) as ERC20Handler;
-    this.currentBlock = Math.max(
+    this.currentBlockNum = Math.max(
       startBlock,
       await this.store.loadEthBlockNum()
     );
+    this.latestBlockNum = 0;
   }
   public async pullBlocks() {
+    this.subscribeLatestBlock();
     while (true) {
-      const latestBlock = await this.provider.getBlockNumber();
-      if (latestBlock - this.args.confirmBlocks - this.currentBlock <= 0) {
-        await sleep(3000);
+      const confirmBlockNum = this.latestBlockNum - this.args.confirmBlocks;
+      if (this.currentBlockNum < confirmBlockNum) {
+        await sleep(2500);
         continue;
       }
       await this.parseBlock();
-      await this.store.storeEthBlockNum(this.currentBlock);
+      await this.store.storeEthBlockNum(this.currentBlockNum);
     }
   }
   public async writeChain(msg: BridgeMsg) {
@@ -131,8 +129,21 @@ export class Service {
       srvs.logger.error(err, logCtx);
     }
   }
+
+  private async subscribeLatestBlock() {
+    while (true) {
+      const latestBlockNum = await this.provider.getBlockNumber();
+      if (latestBlockNum > this.latestBlockNum) {
+        this.latestBlockNum = latestBlockNum;
+        this.gasOpts = await this.provider.getFeeData();
+      } else {
+        await sleep(2500);
+      }
+    }
+  }
+
   private async parseBlock() {
-    const blockNum = this.currentBlock;
+    const blockNum = this.currentBlockNum;
     srvs.logger.debug(`Parse eth block ${blockNum}`);
     const logs = await this.provider.getLogs({
       fromBlock: blockNum,
@@ -154,7 +165,7 @@ export class Service {
       }
       await srvs.sub.writeChain(msg);
     }
-    this.currentBlock += 1;
+    this.currentBlockNum += 1;
   }
 
   private createErc20Data(msg: BridgeMsgErc20): ProposalData {
@@ -173,7 +184,7 @@ export class Service {
     const data =
       "0x" +
       ethers.utils
-        .hexZeroPad(ethers.BigNumber.from(realAmount).toHexString(), 32)
+        .hexZeroPad(BigNumber.from(realAmount).toHexString(), 32)
         .substr(2) + // Deposit Amount        (32 bytes)
       ethers.utils
         .hexZeroPad(ethers.utils.hexlify((recipient.length - 2) / 2), 32)
@@ -192,7 +203,7 @@ export class Service {
     resourceData: ResourceData
   ) {
     const { data, destinationDomainID, depositNonce } = log.args;
-    const amount = ethers.BigNumber.from(
+    const amount = BigNumber.from(
       ethers.utils.stripZeros(data.slice(0, 66))
     ).toString();
     const recipient = data.slice(130);
@@ -230,7 +241,7 @@ export class Service {
     } = resource;
     const tx = await this.bridge.voteProposal(source, nonce, resourceId, data, {
       gasLimit: this.args.gasLimit,
-      gasPrice: this.gasPrice,
+      ...this.gasOpts,
     });
     await this.waitTx(tx);
   }
@@ -248,7 +259,7 @@ export class Service {
       true,
       {
         gasLimit: this.args.gasLimit,
-        gasPrice: this.gasPrice,
+        ...this.gasOpts,
       }
     );
     await this.waitTx(tx);

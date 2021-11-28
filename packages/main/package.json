@@ -15,7 +15,6 @@
     "@polkadot/util-crypto": "^7.9.2",
     "@use-services/echo": "^1.1.0",
     "@use-services/winston": "^1.2.0",
-    "axios": "^0.24.0",
     "decimal.js": "^10.3.1",
     "ethers": "^5.5.1",
     "ethsub-sol": "workspace:^",

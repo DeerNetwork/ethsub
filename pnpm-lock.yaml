@@ -47,7 +47,6 @@ importers:
       '@types/lodash': ^4.14.177
       '@use-services/echo': ^1.1.0
       '@use-services/winston': ^1.2.0
-      axios: ^0.24.0
       decimal.js: ^10.3.1
       ethers: ^5.5.1
       ethsub-sol: workspace:^
@@ -62,7 +61,6 @@ importers:
       '@polkadot/util-crypto': 7.9.2
       '@use-services/echo': 1.1.0
       '@use-services/winston': 1.2.0
-      axios: 0.24.0
       decimal.js: 10.3.1
       ethers: 5.5.1
       ethsub-sol: link:../sol
@@ -3990,14 +3988,6 @@ packages:
     dev: true
     optional: true
 
-  /axios/0.24.0:
-    resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
-    dependencies:
-      follow-redirects: 1.14.5
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
   /babel-code-frame/6.26.0:
     resolution: {integrity: sha1-Y/1D99weO7fONZR9uP42mj9Yx0s=}
     dependencies:
@@ -6958,6 +6948,8 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: true
+    optional: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
