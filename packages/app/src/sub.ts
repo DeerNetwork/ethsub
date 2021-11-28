@@ -7,7 +7,7 @@ import { KeyringPair } from "@polkadot/keyring/types";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { DispatchError, Event } from "@polkadot/types/interfaces";
 import _ from "lodash";
-import { ServiceOption, InitOption, INIT_KEY } from "use-services";
+import { ServiceOption, InitOption, INIT_KEY, STOP_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
 import {
@@ -45,6 +45,7 @@ export class Service {
   private currentBlock: number;
   private store: StoreService;
   private wallet: KeyringPair;
+  private destoryed = false;
 
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
@@ -67,8 +68,13 @@ export class Service {
     );
   }
 
+  public async [STOP_KEY]() {
+    this.destoryed = true;
+  }
+
   public async pullBlocks() {
     while (true) {
+      if (this.destoryed) break;
       const finalizedHash = await this.api.rpc.chain.getFinalizedHead();
       const header = await this.api.rpc.chain.getHeader(finalizedHash);
       const latestBlock = header.number.toNumber();
@@ -83,6 +89,7 @@ export class Service {
 
   public async pullMsgs(source: number) {
     while (true) {
+      if (this.destoryed) break;
       const msg = await this.store.nextMsg(source, this.chainId);
       if (!msg) {
         await sleep(3000);

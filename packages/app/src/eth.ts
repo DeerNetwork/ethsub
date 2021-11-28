@@ -1,7 +1,7 @@
 import { ethers, Wallet } from "ethers";
 import { Bridge } from "ethsub-sol/build/ethers/Bridge";
 import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
-import { ServiceOption, InitOption, INIT_KEY } from "use-services";
+import { ServiceOption, InitOption, INIT_KEY, STOP_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
 import {
@@ -62,6 +62,7 @@ export class Service {
   private bridge: Bridge;
   private gasOpts: ethers.providers.FeeData;
   private erc20Handler: ERC20Handler;
+  private destoryed = false;
 
   public constructor(option: InitOption<Args, Service>) {
     if (option.deps.length !== 1) {
@@ -93,9 +94,14 @@ export class Service {
     this.latestBlockNum = 0;
   }
 
+  public async [STOP_KEY]() {
+    this.destoryed = true;
+  }
+
   public async pullBlocks() {
     this.subscribeLatestBlock();
     while (true) {
+      if (this.destoryed) break;
       const confirmBlockNum = this.latestBlockNum - this.args.confirmBlocks;
       if (this.currentBlockNum >= confirmBlockNum) {
         await sleep(2500);
@@ -108,6 +114,7 @@ export class Service {
 
   public async pullMsgs(source: number) {
     while (true) {
+      if (this.destoryed) break;
       const msg = await this.store.nextMsg(source, this.chainId);
       if (!msg) {
         await sleep(3000);
@@ -163,6 +170,7 @@ export class Service {
 
   private async subscribeLatestBlock() {
     while (true) {
+      if (this.destoryed) break;
       const latestBlockNum = await this.provider.getBlockNumber();
       if (latestBlockNum > this.latestBlockNum) {
         this.latestBlockNum = latestBlockNum;
