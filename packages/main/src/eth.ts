@@ -3,7 +3,7 @@ import { Bridge } from "ethsub-sol/build/ethers/Bridge";
 import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
-import { exchangeAmountDecimals, sleep } from "./utils";
+import { exchangeAmount, sleep } from "./utils";
 import { BridgeMsg, BridgeMsgErc20, ResourceData, ResourceType } from "./types";
 import { srvs } from "./services";
 
@@ -96,10 +96,39 @@ export class Service {
     }
   }
   public async writeChain(msg: BridgeMsg) {
-    if (msg.type === ResourceType.ERC20) {
-      await this.createErc20Proposal(msg);
-    } else {
-      throw new Error(`Write eth throw unknown msg type ${msg.type}`);
+    const { source, nonce } = msg;
+    const logCtx = { source, nonce };
+    try {
+      let proposalData: ProposalData;
+      if (msg.type === ResourceType.ERC20) {
+        proposalData = this.createErc20Data(msg);
+      } else {
+        throw new Error(`Write eth throw unknown msg type ${msg.type}`);
+      }
+      const { data, dataHash } = proposalData;
+      let proposal = await this.getProposal(msg, dataHash);
+      if (proposal._status === 3 || proposal._status === 4) {
+        srvs.logger.info(`Proposal complete, skip voting`, logCtx);
+        return;
+      } else if (proposal._status === 0) {
+        srvs.logger.info(`Proposal vote`, logCtx);
+        await this.voteProposal(msg, data, dataHash);
+      } else if (proposal._status === 1) {
+        const voted = await this.hasVoted(msg, dataHash);
+        if (voted) {
+          srvs.logger.info(`Relayer has already voted`, logCtx);
+          return;
+        }
+        await this.voteProposal(msg, data, dataHash);
+        srvs.logger.info(`Proposal vote`, logCtx);
+      }
+      proposal = await this.getProposal(msg, dataHash);
+      if (proposal._status === 2) {
+        await this.executeProposal(msg, data);
+        srvs.logger.info(`Proposal execute`, logCtx);
+      }
+    } catch (err) {
+      srvs.logger.error(err, logCtx);
     }
   }
   private async parseBlock() {
@@ -128,60 +157,34 @@ export class Service {
     this.currentBlock += 1;
   }
 
-  private async createErc20Proposal(msg: BridgeMsgErc20) {
+  private createErc20Data(msg: BridgeMsgErc20): ProposalData {
     const {
       source,
       nonce,
       resource,
       payload: { recipient, amount },
     } = msg;
-    const logCtx = { source, nonce };
-    try {
-      srvs.logger.info(`Write erc20 propsoal`, logCtx);
-      const realAmount = exchangeAmountDecimals(
-        amount,
-        resource.sub.decimals,
-        resource.eth.decimals
-      );
-      const data =
-        "0x" +
-        ethers.utils
-          .hexZeroPad(ethers.BigNumber.from(realAmount).toHexString(), 32)
-          .substr(2) + // Deposit Amount        (32 bytes)
-        ethers.utils
-          .hexZeroPad(ethers.utils.hexlify((recipient.length - 2) / 2), 32)
-          .substr(2) + // len(recipientAddress) (32 bytes)
-        recipient.substr(2); // recipientAddress      (?? bytes)
+    srvs.logger.info(`Write erc20 propsoal`, { source, nonce });
+    const realAmount = exchangeAmount(
+      amount,
+      resource.sub.decimals,
+      resource.eth.decimals
+    );
+    const data =
+      "0x" +
+      ethers.utils
+        .hexZeroPad(ethers.BigNumber.from(realAmount).toHexString(), 32)
+        .substr(2) + // Deposit Amount        (32 bytes)
+      ethers.utils
+        .hexZeroPad(ethers.utils.hexlify((recipient.length - 2) / 2), 32)
+        .substr(2) + // len(recipientAddress) (32 bytes)
+      recipient.substr(2); // recipientAddress      (?? bytes)
 
-      const dataHash = ethers.utils.solidityKeccak256(
-        ["address", "bytes"],
-        [this.erc20Handler.address, data]
-      );
-
-      let proposal = await this.getProposal(msg, dataHash);
-      if (proposal._status === 3 || proposal._status === 4) {
-        srvs.logger.info(`Proposal complete, skip voting`, logCtx);
-        return;
-      } else if (proposal._status === 0) {
-        srvs.logger.info(`Proposal vote`, logCtx);
-        await this.voteProposal(msg, data, dataHash);
-      } else if (proposal._status === 1) {
-        const voted = await this.hasVoted(msg, dataHash);
-        if (voted) {
-          srvs.logger.info(`Relayer has already voted`, logCtx);
-          return;
-        }
-        await this.voteProposal(msg, data, dataHash);
-        srvs.logger.info(`Proposal vote`, logCtx);
-      }
-      proposal = await this.getProposal(msg, dataHash);
-      if (proposal._status === 2) {
-        await this.executeProposal(msg, data);
-        srvs.logger.info(`Proposal execute`, logCtx);
-      }
-    } catch (err) {
-      srvs.logger.error(err, logCtx);
-    }
+    const dataHash = ethers.utils.solidityKeccak256(
+      ["address", "bytes"],
+      [this.erc20Handler.address, data]
+    );
+    return { data, dataHash };
   }
 
   private parseErc20(
@@ -258,4 +261,9 @@ export class Service {
   private idAndNonce(msg: BridgeMsg) {
     return (msg.nonce << 8) + msg.source;
   }
+}
+
+interface ProposalData {
+  data: string;
+  dataHash: string;
 }

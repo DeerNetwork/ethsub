@@ -1,13 +1,15 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
+import { AugmentedSubmittable } from "@polkadot/api/types";
 import { ITuple } from "@polkadot/types/types";
 import { SubmittableExtrinsic } from "@polkadot/api/promise/types";
 import { Keyring } from "@polkadot/keyring";
 import { KeyringPair } from "@polkadot/keyring/types";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { DispatchError, Event } from "@polkadot/types/interfaces";
+import _ from "lodash";
 import { ServiceOption, InitOption, INIT_KEY } from "use-services";
 import { Service as StoreService } from "./store";
-import { exchangeAmountDecimals, sleep } from "./utils";
+import { exchangeAmount, sleep } from "./utils";
 import { BridgeMsg, ResourceType, BridgeMsgErc20, ResourceData } from "./types";
 import { srvs } from "./services";
 
@@ -69,10 +71,39 @@ export class Service {
   }
 
   public async writeChain(msg: BridgeMsg) {
-    if (msg.type === ResourceType.ERC20) {
-      await this.createErc20Proposal(msg);
-    } else {
-      throw new Error(`Write sub throw unknown msg type ${msg.type}`);
+    const { source, nonce, resource } = msg;
+    const logCtx = { source, nonce };
+    try {
+      const {
+        sub: { resourceId },
+      } = resource;
+      const maybeMethod = await this.api.query.bridge.resources(resourceId);
+      if (maybeMethod.isNone) {
+        throw new Error(`Write sub throw invalid resource ${resource.name}`);
+      }
+      const method = maybeMethod.unwrap().toUtf8();
+      let callData: SubmittableExtrinsic;
+      if (msg.type === ResourceType.ERC20) {
+        callData = this.createErc20Call(msg, method);
+      } else {
+        throw new Error(`Write sub throw unknown msg type ${msg.type}`);
+      }
+      const should = await this.shouldProposal(msg, callData);
+      if (!should) {
+        srvs.logger.info(`Proposal ignoring`, logCtx);
+        return false;
+      }
+      await this.sendTx(
+        this.api.tx.bridge.acknowledgeProposal(
+          nonce,
+          source,
+          resourceId,
+          callData
+        )
+      );
+      srvs.logger.info(`Proposal acknowledge`, logCtx);
+    } catch (err) {
+      srvs.logger.error(err, logCtx);
     }
   }
 
@@ -100,51 +131,25 @@ export class Service {
     this.currentBlock += 1;
   }
 
-  private async createErc20Proposal(msg: BridgeMsgErc20) {
+  private createErc20Call(msg: BridgeMsgErc20, method: string) {
     const {
       source,
       nonce,
       resource,
       payload: { recipient, amount },
     } = msg;
-    const logCtx = { source, nonce };
-    try {
-      srvs.logger.info(`Write erc20 propsoal`, logCtx);
-      const {
-        sub: { resourceId },
-      } = resource;
-      const maybeMethod = await this.api.query.bridge.resources(resourceId);
-      if (maybeMethod.isNone) {
-        throw new Error(`Resource ${resource.name} not found on eth chain`);
-      }
-      const realAmount = exchangeAmountDecimals(
-        amount,
-        resource.eth.decimals,
-        resource.sub.decimals
-      );
-      const method = maybeMethod.unwrap().toUtf8();
-      if (method !== "bridgeTransfer.transfer") {
-        throw new Error(
-          `Resource ${resource.name} with invalid method ${method}`
-        );
-      }
-      const call = this.api.tx.bridgeTransfer.transfer(
-        "0x" + recipient,
-        realAmount,
-        resource.sub.resourceId
-      );
-      const should = await this.shouldProposal(msg, call);
-      if (!should) {
-        srvs.logger.info(`Ignoring proposal`, logCtx);
-        return false;
-      }
-      await this.sendTx(
-        this.api.tx.bridge.acknowledgeProposal(nonce, source, resourceId, call)
-      );
-      srvs.logger.info(`Acknowledging proposal on chain`, logCtx);
-    } catch (err) {
-      srvs.logger.error(err, logCtx);
+    srvs.logger.info(`Write erc20 propsoal`, { source, nonce });
+    const realAmount = exchangeAmount(
+      amount,
+      resource.eth.decimals,
+      resource.sub.decimals
+    );
+    const fn: AugmentedSubmittable<(...args: any[]) => SubmittableExtrinsic> =
+      _.get(this.api.tx, method) as any;
+    if (!fn || fn.meta.args.length !== 3) {
+      `Resource ${resource.name} with invalid method ${method}`;
     }
+    return fn("0x" + recipient, realAmount, resource.sub.resourceId);
   }
 
   private parseErc20(event: Event, resourceData: ResourceData) {

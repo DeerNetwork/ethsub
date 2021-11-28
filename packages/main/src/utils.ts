@@ -15,7 +15,7 @@ export function mergeJson(data: any, file: string) {
   } catch (err) {}
 }
 
-export function exchangeAmountDecimals(
+export function exchangeAmount(
   amount: string,
   fromDecimals: number,
   toDecimals: number

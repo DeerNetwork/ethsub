@@ -36,6 +36,6 @@ export interface ResourceChainData {
 }
 
 export enum ResourceType {
-  ERC20,
-  GENERIC,
+  ERC20 = "erc20",
+  GENERIC = "generic",
 }
