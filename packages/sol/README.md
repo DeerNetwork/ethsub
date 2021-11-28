@@ -1,3 +1,3 @@
-# ethsub-sol
+# sol
 
-Initial from [chainsafe-solidity](https://github.com/ChainSafe/chainbridge-deploy);
+Forked from [chainsafe-solidity](https://github.com/ChainSafe/chainbridge-solidity);
