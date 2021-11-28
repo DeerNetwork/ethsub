@@ -4,7 +4,7 @@ A bridge between etherium and substrate. A node.js version of [ChainSafe/ChainBr
 
 ## Packages
 
-- app: bridge app
-- sol: solidity contracts
-- sol-cli: a cli to interact with ethereum
-- sub-cli: a cli to interact with substrate
+- [app](./packages/app/README.md): bridge app
+- [sol](./packages/sol/README.md): solidity contracts
+- [sol-cli](./packages/sol-cli/README.md)sol-cli: a cli to interact with ethereum
+- [sub-cli](./packages/sub-cli/README.md): a cli to interact with substrate

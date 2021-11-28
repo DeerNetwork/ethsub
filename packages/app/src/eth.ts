@@ -138,12 +138,12 @@ export class Service {
         srvs.logger.info(`Proposal completed, skip voting`, logCtx);
         return true;
       } else if (proposal._status === 0) {
-        srvs.logger.info(`Proposal vote`, logCtx);
         await this.voteProposal(msg, data, dataHash);
+        srvs.logger.info(`Proposal vote`, logCtx);
       } else if (proposal._status === 1) {
         const voted = await this.hasVoted(msg, dataHash);
         if (voted) {
-          srvs.logger.info(`Relayer has already voted`, logCtx);
+          srvs.logger.info(`Proposal voted`, logCtx);
           return true;
         }
         await this.voteProposal(msg, data, dataHash);
