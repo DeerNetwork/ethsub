@@ -85,7 +85,7 @@ export class Service {
     this.subscribeLatestBlock();
     while (true) {
       const confirmBlockNum = this.latestBlockNum - this.args.confirmBlocks;
-      if (this.currentBlockNum < confirmBlockNum) {
+      if (this.currentBlockNum >= confirmBlockNum) {
         await sleep(2500);
         continue;
       }

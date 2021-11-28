@@ -37,7 +37,6 @@ importers:
 
   packages/main:
     specifiers:
-      '@deernetwork/type-definitions': ^0.4.0
       '@ethersproject/abi': ^5.5.0
       '@ethersproject/providers': ^5.5.0
       '@polkadot/api': ^6.9.2
@@ -69,7 +68,6 @@ importers:
       use-services: 1.2.0
       winston: 3.3.3
     devDependencies:
-      '@deernetwork/type-definitions': 0.4.0
       '@ethersproject/abi': 5.5.0
       '@ethersproject/providers': 5.5.0
       '@types/lodash': 4.14.177
@@ -863,10 +861,6 @@ packages:
       enabled: 2.0.0
       kuler: 2.0.0
     dev: false
-
-  /@deernetwork/type-definitions/0.4.0:
-    resolution: {integrity: sha512-zfJw6YmeXW5cl/57VKezlrcd1YJkbSoJQdFiYB+RMt8+eiy/Arfk5my4uySBFlYelsnLXo5cocp9dxUobQBokw==}
-    dev: true
 
   /@ensdomains/address-encoder/0.1.9:
     resolution: {integrity: sha512-E2d2gP4uxJQnDu2Kfg1tHNspefzbLT8Tyjrm5sEuim32UkU2sm5xL4VXtgc2X33fmPEw9+jUMpGs4veMbf+PYg==}

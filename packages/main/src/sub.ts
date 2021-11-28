@@ -77,7 +77,9 @@ export class Service {
       const {
         sub: { resourceId },
       } = resource;
-      const maybeMethod = await this.api.query.bridge.resources(resourceId);
+      const maybeMethod = (await this.api.query.bridge.resources(
+        resourceId
+      )) as any;
       if (maybeMethod.isNone) {
         throw new Error(`Write sub throw invalid resource ${resource.name}`);
       }
@@ -173,10 +175,10 @@ export class Service {
     call: SubmittableExtrinsic
   ) {
     const { source, nonce } = msg;
-    const maybeVote = await this.api.query.bridge.votes(msg.source, [
+    const maybeVote = (await this.api.query.bridge.votes(msg.source, [
       msg.nonce,
       call,
-    ]);
+    ])) as any;
     if (maybeVote.isNone) {
       return true;
     }
