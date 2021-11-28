@@ -10,8 +10,8 @@ sub-cli *args:
     -node packages/sub-cli/index.js {{args}}
 
 run:
-    rm -rf packages/main/data
-    pnpm run --filter ./packages/main dev
+    rm -rf packages/app/data
+    pnpm run --filter ./packages/app dev
 
 run-eth +args='-b 3 -l 8000000':
     ganache-cli \

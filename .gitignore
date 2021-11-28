@@ -3,8 +3,8 @@ build
 dist
 *.log
 .vscode
-/packages/main/config.json
-/packages/main/data
-/packages/main/src/contracts
+/packages/app/config.json
+/packages/app/data
+/packages/app/src/contracts
 /sol
 .env
