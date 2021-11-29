@@ -1,6 +1,6 @@
 {
   "name": "@ethsub/sol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ethsub contracts",
   "license": "MIT",
   "keywords": [
@@ -19,10 +19,10 @@
     "directory": "packages/sol"
   },
   "scripts": {
-    "postinstall": "rimraf build && npm run compile && npm run typegen",
     "compile": "truffle compile",
     "typegen": "typechain --target ethers-v5 --out-dir build/ethers/ build/contracts/*.json",
-    "test": "truffle test"
+    "test": "truffle test",
+    "prepublishOnly": "rimraf build && npm run compile && npm run typegen"
   },
   "files": [
     "build",

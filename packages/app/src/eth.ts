@@ -1,6 +1,6 @@
 import { ethers, Wallet } from "ethers";
-import { Bridge } from "ethsub-sol/build/ethers/Bridge";
-import { ERC20Handler } from "ethsub-sol/build/ethers/ERC20Handler";
+import { Bridge } from "@ethsub/sol/build/ethers/Bridge";
+import { ERC20Handler } from "@ethsub/sol/build/ethers/ERC20Handler";
 import { ServiceOption, InitOption, INIT_KEY, STOP_KEY } from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
