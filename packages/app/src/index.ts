@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { init, srvs } from "./services";
 import pEvent from "p-event";
 

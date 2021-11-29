@@ -1,6 +1,23 @@
 {
   "name": "ethsub-sol",
   "version": "0.1.0",
+  "description": "ethsub contracts",
+  "license": "MIT",
+  "keywords": [
+    "bridge",
+    "solidity",
+    "etherum",
+    "ethsub"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "directory": "packages/sol"
+  },
   "scripts": {
     "postinstall": "rimraf build && npm run compile && npm run typegen",
     "compile": "truffle compile",
@@ -12,6 +29,8 @@
     "contracts"
   ],
   "dependencies": {
+    "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/providers": "^5.5.0",
     "@openzeppelin/contracts": "^3.4.2"
   },
   "devDependencies": {

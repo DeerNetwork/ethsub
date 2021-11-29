@@ -1,6 +1,18 @@
 {
   "name": "ethsub-sub-cli",
   "version": "0.1.0",
+  "description": "A cli to interact with substrate",
+  "keywords": ["substrate", "substrate-cli", "polkadot"],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "directory": "packages/sub-cli"
+  },
   "bin": "index.js",
   "dependencies": {
     "@polkadot/api": "^6.9.2",

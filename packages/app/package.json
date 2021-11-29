@@ -1,7 +1,19 @@
 {
   "name": "ethsub",
   "version": "0.1.0",
+  "description": "A bridge between ethereum and substrate",
+  "keywords": ["etherum", "substrate", "bridge", "polkadot", "ethsub"],
+  "bin": "dist/index.js",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "directory": "packages/app"
+  },
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.build.json",
@@ -14,15 +26,15 @@
     "@polkadot/util": "^7.9.2",
     "@polkadot/util-crypto": "^7.9.2",
     "@types/levelup": "^4.3.3",
-    "@use-services/echo": "^1.1.0",
-    "@use-services/winston": "^1.2.0",
+    "@use-services/echo": "^1.1.1",
+    "@use-services/winston": "^1.2.1",
     "decimal.js": "^10.3.1",
     "ethers": "^5.5.1",
     "ethsub-sol": "workspace:^",
     "level": "^7.0.1",
     "lodash": "^4.17.21",
     "p-event": "^4",
-    "use-services": "^1.2.0",
+    "use-services": "^1.2.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {

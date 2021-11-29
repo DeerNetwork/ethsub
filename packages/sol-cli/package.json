@@ -2,6 +2,18 @@
 {
   "name": "ethsub-sol-cli",
   "version": "0.1.0",
+  "description": "A cli to interact with ethereum",
+  "license": "MIT",
+  "keywords": ["bridge", "solidity", "etherum", "ethsub"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "directory": "packages/sol-cli"
+  },
   "bin": "index.js",
   "dependencies": {
     "ethsub-sol": "workspace:^",
