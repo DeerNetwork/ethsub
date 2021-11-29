@@ -1,5 +1,5 @@
 {
-  "name": "ethsub-sub-cli",
+  "name": "@ethsub/sub-cli",
   "version": "0.1.0",
   "description": "A cli to interact with substrate",
   "keywords": ["substrate", "substrate-cli", "polkadot"],

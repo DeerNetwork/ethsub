@@ -1,6 +1,6 @@
 
 {
-  "name": "ethsub-sol-cli",
+  "name": "@ethsub/sol-cli",
   "version": "0.1.0",
   "description": "A cli to interact with ethereum",
   "license": "MIT",
@@ -16,7 +16,7 @@
   },
   "bin": "index.js",
   "dependencies": {
-    "ethsub-sol": "workspace:^",
+    "@ethsub/sol": "workspace:^",
     "commander": "^5.0.0",
     "ethers": "^5.5.1"
   }
