@@ -4,7 +4,7 @@
  */
 const ethers = require("ethers");
 
-const CONTRACT_PATH = "ethsub-sol/build/contracts";
+const CONTRACT_PATH = "@ethsub/sol/build/contracts";
 const ContractABIs = {
   Bridge: require(CONTRACT_PATH + "/Bridge.json"),
   Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),

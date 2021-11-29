@@ -44,14 +44,14 @@ importers:
       '@polkadot/util-crypto': ^7.9.2
       '@types/levelup': ^4.3.3
       '@types/lodash': ^4.14.177
-      '@use-services/echo': ^1.1.1
-      '@use-services/winston': ^1.2.1
+      '@use-services/echo': ^1.3.0
+      '@use-services/winston': ^1.3.0
       decimal.js: ^10.3.1
       ethers: ^5.5.1
       level: ^7.0.1
       lodash: ^4.17.21
       p-event: ^4
-      use-services: ^1.2.1
+      use-services: ^1.3.1
       winston: ^3.3.3
     dependencies:
       '@ethsub/sol': link:../sol
@@ -60,17 +60,16 @@ importers:
       '@polkadot/util': 7.9.2
       '@polkadot/util-crypto': 7.9.2
       '@types/levelup': 4.3.3
-      '@use-services/echo': 1.1.1
-      '@use-services/winston': 1.2.1
+      '@types/lodash': 4.14.177
+      '@use-services/echo': 1.3.0
+      '@use-services/winston': 1.3.0
       decimal.js: 10.3.1
       ethers: 5.5.1
       level: 7.0.1
       lodash: 4.17.21
       p-event: 4.2.0
-      use-services: 1.2.1
+      use-services: 1.3.1
       winston: 3.3.3
-    devDependencies:
-      '@types/lodash': 4.14.177
 
   packages/sol:
     specifiers:
@@ -2995,7 +2994,7 @@ packages:
 
   /@types/lodash/4.14.177:
     resolution: {integrity: sha512-0fDwydE2clKe9MNfvXHBHF9WEahRuj+msTuQqOmAApNORFvhMYZKNGGJdCzuhheVjMps/ti0Ak/iJPACMaevvw==}
-    dev: true
+    dev: false
 
   /@types/long/4.0.1:
     resolution: {integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==}
@@ -3203,18 +3202,18 @@ packages:
       eslint-visitor-keys: 3.1.0
     dev: true
 
-  /@use-services/echo/1.1.1:
-    resolution: {integrity: sha512-0nkFjN9LRBH3AoxqLuoiC7u+vg6rk989BvOuHpcvcNAwHzy6AzW287cR4pcH73HgCR5MxW9CvYECuYXIaQn1UA==}
+  /@use-services/echo/1.3.0:
+    resolution: {integrity: sha512-ln4hyG8yNcOafVm6SS1Xgyz3LmWtcYlKdQjHeRk2pI7C/R9VILwAhNZxA3TwSHi/0Vcoa8QMzCYzduErBRnWDg==}
     dependencies:
-      use-services: 1.2.1
+      use-services: 1.3.1
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@use-services/winston/1.2.1:
-    resolution: {integrity: sha512-Sr4X+KuTup5tCSNUlGUQBxgKbCqS90ngBNGbioe7Li4ds9ftNz0/bxxEeQzVqu6gbFqzRdkK4EL27C4jbjMQCw==}
+  /@use-services/winston/1.3.0:
+    resolution: {integrity: sha512-Gb4MQj/oQkf47ChjyLS+HDmZ27ZYYIiHlXGJWBrIMELnIpRS/t2WtHD3GbVzC7Bc1spMAIq8f6whXRbpeKwBbA==}
     dependencies:
-      use-services: 1.2.1
+      use-services: 1.3.1
       winston: 3.3.3
     transitivePeerDependencies:
       - supports-color
@@ -13879,8 +13878,8 @@ packages:
     dev: true
     optional: true
 
-  /use-services/1.2.1:
-    resolution: {integrity: sha512-Dk8OVAyIAphM/WX8P2cnuw4Tsrv+dwvG9K5jeBIJUTQsQwXglnA6gTOtXUv8mo0ksD/dEis+rDC3acj9NbTPLw==}
+  /use-services/1.3.1:
+    resolution: {integrity: sha512-bfiqWTnhCVleneadzV9e10TASqMMjR1bOAio2otkwB1KhIa5Dpzg9trh2Gp1xci9er2E/s5XFzoHUqE6F5e2DA==}
     dependencies:
       debug: 4.3.2
       p-event: 4.2.0

@@ -2,7 +2,13 @@ import fs from "fs";
 import path from "path";
 import level from "level";
 import type { LevelUp } from "levelup";
-import { ServiceOption, InitOption, INIT_KEY, STOP_KEY } from "use-services";
+import {
+  ServiceOption,
+  InitOption,
+  INIT_KEY,
+  STOP_KEY,
+  createInitFn,
+} from "use-services";
 import { BridgeMsg, BridgeMsgStatus } from "./types";
 import { srvs } from "./services";
 
@@ -10,14 +16,6 @@ export type Option<S extends Service> = ServiceOption<Args, S>;
 
 export interface Args {
   dataDir: string;
-}
-
-export async function init<S extends Service>(
-  option: InitOption<Args, S>
-): Promise<S> {
-  const srv = new (option.ctor || Service)(option);
-  await srv[INIT_KEY]();
-  return srv as S;
 }
 
 const ETH_BN_KEY = "bn:eth";
@@ -161,6 +159,8 @@ export class Service {
     return key;
   }
 }
+
+export const init = createInitFn(Service);
 
 interface KeyableBridgeMsg {
   source: number;

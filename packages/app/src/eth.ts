@@ -1,7 +1,13 @@
 import { ethers, Wallet } from "ethers";
 import { Bridge } from "@ethsub/sol/build/ethers/Bridge";
 import { ERC20Handler } from "@ethsub/sol/build/ethers/ERC20Handler";
-import { ServiceOption, InitOption, INIT_KEY, STOP_KEY } from "use-services";
+import {
+  ServiceOption,
+  InitOption,
+  INIT_KEY,
+  STOP_KEY,
+  createInitFn,
+} from "use-services";
 import { Service as StoreService } from "./store";
 import { exchangeAmount, sleep } from "./utils";
 import {
@@ -13,8 +19,9 @@ import {
 } from "./types";
 import { srvs } from "./services";
 
-export type Deps = [StoreService];
 export type Option<S extends Service> = ServiceOption<Args, S>;
+
+export type Deps = [StoreService];
 
 const EventSig = {
   Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
@@ -22,7 +29,7 @@ const EventSig = {
 
 const { BigNumber } = ethers;
 
-const CONTRACT_PATH = "ethsub-sol/build/contracts";
+const CONTRACT_PATH = "@ethsub/sol/build/contracts";
 
 const ContractABIs = {
   Bridge: require(CONTRACT_PATH + "/Bridge.json"),
@@ -40,14 +47,6 @@ export interface Args {
     bridge: string;
     erc20Handler: string;
   };
-}
-
-export async function init<S extends Service>(
-  option: InitOption<Args, S>
-): Promise<S> {
-  const srv = new (option.ctor || Service)(option);
-  await srv[INIT_KEY]();
-  return srv as S;
 }
 
 export class Service {
@@ -312,6 +311,8 @@ export class Service {
     return (msg.nonce << 8) + msg.source;
   }
 }
+
+export const init = createInitFn(Service);
 
 interface ProposalData {
   data: string;
