@@ -49,8 +49,8 @@ const deployCmd = new Command("deploy")
   .option("--erc721Symbol <symbol>", "Name for the erc721 contract", "")
   .option("--erc721Name <name>", "Symbol for the erc721 contract", "")
   .option("--erc721BaseUri <uri>", "Base URI for the erc721 contract", "")
-  .option("--centAsset", "Deploy chain asset contract")
-  .option("--weth", "Deploy wrapped ETC Erc20 contract")
+  .option("--chainAsset", "Deploy chain asset contract")
+  .option("--weth", "Deploy wrapped ETH Erc20 contract")
   .option("--config", "Logs the configuration based on the deployment", false)
   .action(async (args) => {
     await setupParentArgs(args, args.parent);

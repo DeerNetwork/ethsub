@@ -11,8 +11,8 @@ const setupParentArgs = async (args, parent) => {
       chainId: Number(parent.networkId),
     });
   }
-  args.gasLimit = ethers.utils.hexlify(Number(parent.gasLimit));
-  args.gasPrice = ethers.utils.hexlify(Number(parent.gasPrice));
+  args.gasLimit = ethers.utils.hexlify(ethers.BigNumber.from(parent.gasLimit));
+  args.gasPrice = ethers.utils.hexlify(ethers.BigNumber.from(parent.gasPrice));
   if (!parent.jsonWallet) {
     args.wallet = new ethers.Wallet(parent.privateKey, args.provider);
   } else {

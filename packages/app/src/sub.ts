@@ -237,7 +237,7 @@ export class Service {
       tx.signAndSend(this.wallet, ({ events = [], status }) => {
         if (status.isInvalid || status.isDropped || status.isUsurped) {
           reject(new Error(`${status.type} transaction.`));
-        } else {
+          return;
         }
 
         if (status.isInBlock) {
@@ -263,7 +263,6 @@ export class Service {
               resolve();
             }
           });
-        } else {
         }
       }).catch((e) => {
         reject(e);
