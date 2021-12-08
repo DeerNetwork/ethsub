@@ -59,7 +59,7 @@ export class Service {
   private wallet: Wallet;
   private store: StoreService;
   private bridge: Bridge;
-  private gasOpts: ethers.providers.FeeData;
+  private gasOpts: Partial<ethers.providers.FeeData>;
   private erc20Handler: ERC20Handler;
   private destoryed = false;
 
@@ -173,7 +173,13 @@ export class Service {
       const latestBlockNum = await this.provider.getBlockNumber();
       if (latestBlockNum > this.latestBlockNum) {
         this.latestBlockNum = latestBlockNum;
-        this.gasOpts = await this.provider.getFeeData();
+        const {gasPrice, maxFeePerGas, maxPriorityFeePerGas} =
+          await this.provider.getFeeData();
+        if (maxFeePerGas) {
+          this.gasOpts = {maxFeePerGas, maxPriorityFeePerGas};
+        } else {
+          this.gasOpts = {gasPrice};
+        }
       } else {
         await sleep(2500);
       }

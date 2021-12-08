@@ -41,7 +41,7 @@ init-sub:
     just sub-cli --sudo bridge.addRelayer $SUB_ALICE_ADDRESS
     just sub-cli --sudo bridge.setResource $SUB_TOKEN_RESOURCEID $PALLET_TRANSFER_METHOD
     just sub-cli --sudo bridge.whitelistChain 0
-    just sub-cli --sudo bridgeTransfer.changeFee 1 1 0
+    just sub-cli --sudo bridgeTransfer.changeFee 10 0 0
     just sub-cli balances.transfer $SUB_BRIDGE_ACCOUNT 10000
 
 trans-eth amount="100" to="$SUB_BOB_ADDRESS":

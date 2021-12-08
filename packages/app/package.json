@@ -1,6 +1,6 @@
 {
   "name": "ethsub",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A bridge between ethereum and substrate",
   "keywords": [
     "etherum",
@@ -10,6 +10,9 @@
     "ethsub"
   ],
   "bin": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
