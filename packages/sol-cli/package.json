@@ -1,7 +1,7 @@
 
 {
   "name": "@ethsub/sol-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A cli to interact with ethereum",
   "license": "MIT",
   "keywords": ["bridge", "solidity", "etherum", "ethsub"],

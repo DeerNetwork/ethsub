@@ -1,6 +1,6 @@
 {
   "name": "@ethsub/sub-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A cli to interact with substrate",
   "keywords": [
     "substrate",
@@ -20,6 +20,7 @@
   "bin": "index.js",
   "dependencies": {
     "@polkadot/api": "^6.11.1",
+    "@polkadot/keyring": "^8.1.2",
     "commander": "^5.0.0"
   }
 }

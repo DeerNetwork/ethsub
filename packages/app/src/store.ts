@@ -2,13 +2,7 @@ import fs from "fs";
 import path from "path";
 import level from "level";
 import type {LevelUp} from "levelup";
-import {
-  ServiceOption,
-  InitOption,
-  INIT_KEY,
-  STOP_KEY,
-  createInitFn,
-} from "use-services";
+import {ServiceOption, InitOption, INIT_KEY, createInitFn} from "use-services";
 import {BridgeMsg, BridgeMsgStatus} from "./types";
 import {srvs} from "./services";
 
@@ -34,10 +28,6 @@ export class Service {
     this.db = level(path.resolve(this.args.dataDir, "db"), {
       valueEncoding: "json",
     });
-  }
-
-  public async [STOP_KEY]() {
-    await this.db.close();
   }
 
   public async storeEthBlockNum(blockNum: number) {
