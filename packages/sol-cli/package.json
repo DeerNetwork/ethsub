@@ -8,15 +8,15 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "homepage": "https://github.com/ethsub/ethsub",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "url": "https://github.com/ethsub/ethsub.git",
     "directory": "packages/sol-cli"
   },
   "bin": "index.js",
   "dependencies": {
-    "@ethsub/sol": "workspace:^",
+    "@ethsub/sol": "^0.1.0",
     "commander": "^5.0.0",
     "ethers": "^5.5.1"
   }

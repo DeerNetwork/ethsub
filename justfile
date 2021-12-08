@@ -1,16 +1,13 @@
 set dotenv-load := true
 
-npm pkg +args:
-    pnpm --filter ./packages/{{pkg}} {{args}}
+run pkg='app' +args='run dev':
+    cd packages/{{pkg}} && npm {{args}}
 
 sol-cli *args:
     -node packages/sol-cli/index.js {{args}}
 
 sub-cli *args:
     -node packages/sub-cli/index.js {{args}}
-
-run:
-    pnpm run --filter ./packages/app dev
 
 run-eth +args='-b 3 -l 8000000':
     ganache-cli \

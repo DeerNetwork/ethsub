@@ -12,10 +12,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/DeerNetwork/ethsub",
+  "homepage": "https://github.com/ethsub/ethsub",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DeerNetwork/ethsub.git",
+    "url": "https://github.com/ethsub/ethsub.git",
     "directory": "packages/sol"
   },
   "scripts": {
