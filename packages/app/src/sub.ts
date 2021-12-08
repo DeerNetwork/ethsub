@@ -1,11 +1,11 @@
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { AugmentedSubmittable } from "@polkadot/api/types";
-import { ITuple } from "@polkadot/types/types";
-import { SubmittableExtrinsic } from "@polkadot/api/promise/types";
-import { Keyring } from "@polkadot/keyring";
-import { KeyringPair } from "@polkadot/keyring/types";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
-import { DispatchError, Event } from "@polkadot/types/interfaces";
+import {ApiPromise, WsProvider} from "@polkadot/api";
+import {AugmentedSubmittable} from "@polkadot/api/types";
+import {ITuple} from "@polkadot/types/types";
+import {SubmittableExtrinsic} from "@polkadot/api/promise/types";
+import {Keyring} from "@polkadot/keyring";
+import {KeyringPair} from "@polkadot/keyring/types";
+import {cryptoWaitReady} from "@polkadot/util-crypto";
+import {DispatchError, Event} from "@polkadot/types/interfaces";
 import _ from "lodash";
 import {
   ServiceOption,
@@ -14,8 +14,8 @@ import {
   STOP_KEY,
   createInitFn,
 } from "use-services";
-import { Service as StoreService } from "./store";
-import { exchangeAmount, sleep } from "./utils";
+import {Service as StoreService} from "./store";
+import {exchangeAmount, sleep} from "./utils";
 import {
   BridgeMsg,
   ResourceType,
@@ -23,7 +23,7 @@ import {
   ResourceData,
   BridgeMsgStatus,
 } from "./types";
-import { srvs } from "./services";
+import {srvs} from "./services";
 
 export type Option<S extends Service> = ServiceOption<Args, S>;
 
@@ -104,11 +104,11 @@ export class Service {
   }
 
   private async writeChain(msg: BridgeMsg) {
-    const { source, nonce, resource } = msg;
-    const logCtx = { source, nonce };
+    const {source, nonce, resource} = msg;
+    const logCtx = {source, nonce};
     try {
       const {
-        sub: { resourceId },
+        sub: {resourceId},
       } = resource;
       const maybeMethod = (await this.api.query.bridge.resources(
         resourceId
@@ -150,7 +150,7 @@ export class Service {
     const events = await this.api.query.system.events.at(blockHash);
     for (const evt of events) {
       let msg: BridgeMsg;
-      const { event } = evt;
+      const {event} = evt;
       if (event.section !== "bridge") continue;
       if (event.method === "FungibleTransfer") {
         const resourceId = event.data[2].toString();
@@ -172,9 +172,9 @@ export class Service {
       source,
       nonce,
       resource,
-      payload: { recipient, amount },
+      payload: {recipient, amount},
     } = msg;
-    srvs.logger.info(`Write erc20 propsoal`, { source, nonce });
+    srvs.logger.info(`Write erc20 propsoal`, {source, nonce});
     const realAmount = exchangeAmount(
       amount,
       resource.eth.decimals,
@@ -199,7 +199,7 @@ export class Service {
       nonce,
       type: ResourceType.ERC20,
       resource: resourceData,
-      payload: { amount, recipient },
+      payload: {amount, recipient},
     };
     return msg;
   }
@@ -208,7 +208,7 @@ export class Service {
     msg: BridgeMsgErc20,
     call: SubmittableExtrinsic
   ) {
-    const { source, nonce } = msg;
+    const {source, nonce} = msg;
     const maybeVote = (await this.api.query.bridge.votes(msg.source, [
       msg.nonce,
       call,
@@ -222,26 +222,26 @@ export class Service {
         vote.votesFor.find((v) => v.eq(this.wallet.address)) ||
         vote.votesAgainst.find((v) => v.eq(this.wallet.address))
       ) {
-        srvs.logger.info("Proposal voted", { source, nonce });
+        srvs.logger.info("Proposal voted", {source, nonce});
         return false;
       }
       return true;
     } else {
-      srvs.logger.info("Proposal completed", { source, nonce });
+      srvs.logger.info("Proposal completed", {source, nonce});
       return false;
     }
   }
   async sendTx(tx: SubmittableExtrinsic): Promise<void> {
     if (process.env.DRY_RUN) return;
     return new Promise((resolve, reject) => {
-      tx.signAndSend(this.wallet, ({ events = [], status }) => {
+      tx.signAndSend(this.wallet, ({events = [], status}) => {
         if (status.isInvalid || status.isDropped || status.isUsurped) {
           reject(new Error(`${status.type} transaction.`));
           return;
         }
 
         if (status.isInBlock) {
-          events.forEach(({ event: { data, method, section } }) => {
+          events.forEach(({event: {data, method, section}}) => {
             if (section === "system" && method === "ExtrinsicFailed") {
               const [dispatchError] = data as unknown as ITuple<
                 [DispatchError]
@@ -275,6 +275,6 @@ export const init = createInitFn(Service);
 
 async function createWallet(privateKey: string) {
   await cryptoWaitReady();
-  const keyring = new Keyring({ type: "sr25519" });
+  const keyring = new Keyring({type: "sr25519"});
   return keyring.addFromUri(privateKey);
 }

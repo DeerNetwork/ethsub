@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import level from "level";
-import type { LevelUp } from "levelup";
+import type {LevelUp} from "levelup";
 import {
   ServiceOption,
   InitOption,
@@ -9,8 +9,8 @@ import {
   STOP_KEY,
   createInitFn,
 } from "use-services";
-import { BridgeMsg, BridgeMsgStatus } from "./types";
-import { srvs } from "./services";
+import {BridgeMsg, BridgeMsgStatus} from "./types";
+import {srvs} from "./services";
 
 export type Option<S extends Service> = ServiceOption<Args, S>;
 
@@ -30,7 +30,7 @@ export class Service {
   }
 
   public async [INIT_KEY]() {
-    await fs.promises.mkdir(this.args.dataDir, { recursive: true });
+    await fs.promises.mkdir(this.args.dataDir, {recursive: true});
     this.db = level(path.resolve(this.args.dataDir, "db"), {
       valueEncoding: "json",
     });
@@ -73,8 +73,8 @@ export class Service {
   public async loadMsg(key: string): Promise<BridgeMsg> {
     const value = await this.safeGet(key);
     if (!value) return;
-    const { source, destination, nonce } = this.parseMsgKey(key);
-    const { name, payload } = value;
+    const {source, destination, nonce} = this.parseMsgKey(key);
+    const {name, payload} = value;
     const resource = srvs.settings.resources.find((v) => v.name === name);
     return {
       source,
@@ -125,8 +125,8 @@ export class Service {
     );
     const key = await this.firstKey((key) => re.test(key));
     if (!key) return;
-    const { nonce } = this.parseMsgKey(key);
-    return this.loadMsg(this.stringifyMsgKey({ source, destination, nonce }));
+    const {nonce} = this.parseMsgKey(key);
+    return this.loadMsg(this.stringifyMsgKey({source, destination, nonce}));
   }
 
   private async safeGet<T = any>(key: string): Promise<T> {
@@ -138,7 +138,7 @@ export class Service {
     }
   }
   private async firstKey(pred = (_: string) => true) {
-    for await (const [key] of this.db.iterator({ values: false }) as any) {
+    for await (const [key] of this.db.iterator({values: false}) as any) {
       if (pred(key)) return key;
     }
   }
@@ -148,7 +148,7 @@ export class Service {
       .slice(4)
       .split(":")
       .map((v) => parseInt(v));
-    return { source, destination, nonce, status };
+    return {source, destination, nonce, status};
   }
 
   private stringifyMsgKey(msg: KeyableBridgeMsg, status?: BridgeMsgStatus) {

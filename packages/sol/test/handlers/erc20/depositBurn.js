@@ -71,7 +71,7 @@ contract("ERC20Handler - [Deposit Burn ERC20]", async (accounts) => {
       ERC20MintableInstance1.approve(
         ERC20HandlerInstance.address,
         depositAmount,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       BridgeInstance.adminSetResource(
         ERC20HandlerInstance.address,

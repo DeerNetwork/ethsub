@@ -86,7 +86,7 @@ contract("ERC721Handler - [Deposit ERC721]", async (accounts) => {
         lenRecipientAddress,
         recipientAddress
       ),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -118,7 +118,7 @@ contract("ERC721Handler - [Deposit ERC721]", async (accounts) => {
         lenRecipientAddress,
         recipientAddress
       ),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {

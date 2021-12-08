@@ -75,7 +75,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
     await ERC1155MintableInstance.setApprovalForAll(
       ERC1155HandlerInstance.address,
       true,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERC1155DepositData([tokenID], [depositAmount]);
@@ -117,7 +117,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         proposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -131,7 +131,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         proposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -159,7 +159,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
         resourceID,
         depositerAddress,
         depositData,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       "sender must be bridge contract"
     );
@@ -185,7 +185,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
     );
 
     await TruffleAssert.reverts(
-      ERC1155HandlerInstance.withdraw(withdrawData, { from: depositerAddress }),
+      ERC1155HandlerInstance.withdraw(withdrawData, {from: depositerAddress}),
       "sender must be bridge contract"
     );
   });
@@ -207,7 +207,7 @@ contract("E2E ERC1155 - Same Chain", async (accounts) => {
       tokenID,
       depositAmount,
       "0x0",
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositerBalance = await ERC1155MintableInstance.balanceOf(

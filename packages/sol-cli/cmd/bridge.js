@@ -1,13 +1,8 @@
 const ethers = require("ethers");
 const constants = require("../constants");
 
-const { Command } = require("commander");
-const {
-  setupParentArgs,
-  getFunctionBytes,
-  waitForTx,
-  log,
-} = require("./utils");
+const {Command} = require("commander");
+const {setupParentArgs, getFunctionBytes, waitForTx, log} = require("./utils");
 
 const EMPTY_SIG = "0x00000000";
 
@@ -49,7 +44,7 @@ const registerResourceCmd = new Command("register-resource")
       args.handler,
       args.resourceId,
       args.targetContract,
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await waitForTx(args.provider, tx.hash);
   });
@@ -111,7 +106,7 @@ const registerGenericResourceCmd = new Command("register-generic-resource")
       args.targetContract,
       args.deposit,
       args.execute,
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await waitForTx(args.provider, tx.hash);
   });
@@ -148,7 +143,7 @@ const setBurnCmd = new Command("set-burn")
     const tx = await bridgeInstance.adminSetBurnable(
       args.handler,
       args.tokenContract,
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await waitForTx(args.provider, tx.hash);
   });

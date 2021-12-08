@@ -1,8 +1,8 @@
 const ethers = require("ethers");
 const constants = require("../constants");
 
-const { Command } = require("commander");
-const { setupParentArgs, waitForTx, log, expandDecimals } = require("./utils");
+const {Command} = require("commander");
+const {setupParentArgs, waitForTx, log, expandDecimals} = require("./utils");
 
 const mintCmd = new Command("mint")
   .description("Mints erc20 tokens")
@@ -83,7 +83,7 @@ const approveCmd = new Command("approve")
     const tx = await erc20Instance.approve(
       args.recipient,
       expandDecimals(args.amount, args.parent.decimals),
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await waitForTx(args.provider, tx.hash);
   });
@@ -151,7 +151,7 @@ const depositCmd = new Command("deposit")
       args.dest, // destination chain id
       args.resourceId,
       data,
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
 
     await waitForTx(args.provider, tx.hash);

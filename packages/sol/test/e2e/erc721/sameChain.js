@@ -70,7 +70,7 @@ contract("E2E ERC721 - Same Chain", async (accounts) => {
     await ERC721MintableInstance.approve(
       ERC721HandlerInstance.address,
       tokenID,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERCDepositData(tokenID, 20, recipientAddress);
@@ -115,7 +115,7 @@ contract("E2E ERC721 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         proposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -129,7 +129,7 @@ contract("E2E ERC721 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         proposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 

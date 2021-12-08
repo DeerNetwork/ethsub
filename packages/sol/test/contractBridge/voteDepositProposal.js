@@ -119,7 +119,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           depositData,
-          { from: relayer }
+          {from: relayer}
         );
       executeProposal = (relayer) =>
         BridgeInstance.executeProposal(
@@ -127,7 +127,7 @@ contract(
           expectedDepositNonce,
           depositData,
           resourceID,
-          { from: relayer }
+          {from: relayer}
         );
     });
 
@@ -215,7 +215,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           Ethers.utils.keccak256(depositDataHash),
-          { from: relayer2Address }
+          {from: relayer2Address}
         )
       );
     });
@@ -341,7 +341,7 @@ contract(
           expectedDepositNonce,
           depositData,
           "0x0",
-          { from: relayer1Address }
+          {from: relayer1Address}
         ),
         "Proposal must have Passed status"
       );
@@ -354,7 +354,7 @@ contract(
           expectedDepositNonce,
           "0x0",
           depositDataHash,
-          { from: relayer1Address }
+          {from: relayer1Address}
         ),
         "no handler for resourceID"
       );

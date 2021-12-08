@@ -180,17 +180,17 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       ERC20MintableInstance.approve(
         ERC20HandlerInstance.address,
         erc20TokenAmount,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       ERC721MintableInstance.approve(
         ERC721HandlerInstance.address,
         erc721TokenID,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       ERC1155MintableInstance.setApprovalForAll(
         ERC1155HandlerInstance.address,
         true,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       BridgeInstance.adminSetResource(
         ERC20HandlerInstance.address,
@@ -259,7 +259,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
         lenRecipientAddress,
         recipientAddress
       ),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -277,7 +277,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
         lenRecipientAddress,
         recipientAddress
       ),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -291,7 +291,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       erc1155ResourceID,
       Helpers.createERC1155DepositData([erc1155TokenID], [erc1155TokenAmount]),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -305,7 +305,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       chainAssetResourceID,
       Helpers.createGenericDepositData("0xc0ff33"),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -319,7 +319,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       noArgumentResourceID,
       Helpers.createGenericDepositData(null),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -333,7 +333,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       oneArgumentResourceID,
       Helpers.createGenericDepositData(Helpers.toHex(42, 32)),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -360,7 +360,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       twoArgumentsResourceID,
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({
@@ -381,7 +381,7 @@ contract("Gas Benchmark - [Deposits]", async (accounts) => {
       domainID,
       threeArgumentsResourceID,
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     gasBenchmarks.push({

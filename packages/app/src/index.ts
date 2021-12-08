@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-import { init, srvs } from "./services";
+import {init, srvs} from "./services";
 import pEvent from "p-event";
 
 async function main() {
   process.on("unhandledRejection", (reason) => {
-    const { logger } = srvs;
-    if (logger) srvs.logger.error(reason as any, { unhandledRejection: true });
+    const {logger} = srvs;
+    if (logger) srvs.logger.error(reason as any, {unhandledRejection: true});
   });
   process.on("uncaughtException", (err) => {
-    const { logger } = srvs;
-    if (logger) srvs.logger.error(err, { uncaughtException: true });
+    const {logger} = srvs;
+    if (logger) srvs.logger.error(err, {uncaughtException: true});
   });
   let stop;
   try {

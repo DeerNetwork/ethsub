@@ -36,7 +36,7 @@ contract("Gas Benchmark - [Vote Proposal]", async (accounts) => {
       depositNonce,
       resourceID,
       depositData,
-      { from: relayer }
+      {from: relayer}
     );
 
   before(async () => {
@@ -66,7 +66,7 @@ contract("Gas Benchmark - [Vote Proposal]", async (accounts) => {
       ERC20MintableInstance.approve(
         ERC20HandlerInstance.address,
         erc20TokenAmount,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       BridgeInstance.adminSetResource(
         ERC20HandlerInstance.address,

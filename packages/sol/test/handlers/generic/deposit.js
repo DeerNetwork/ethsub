@@ -192,7 +192,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[0],
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -212,7 +212,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[1],
       Helpers.createGenericDepositData(null),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -240,7 +240,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[2],
       Helpers.createGenericDepositData(Helpers.toHex(argumentOne, 32)),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -282,7 +282,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[3],
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -321,7 +321,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[4],
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -361,7 +361,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[5],
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -402,7 +402,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
         domainID,
         initialResourceIDs[5],
         Helpers.createGenericDepositData(encodedMetaData),
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       "incorrect depositer in the data"
     );
@@ -416,7 +416,7 @@ contract("GenericHandler - [deposit]", async (accounts) => {
       domainID,
       initialResourceIDs[6],
       Helpers.createGenericDepositData(encodedMetaData),
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     const expectedMetaData = Ethers.utils.formatBytes32String(argument);

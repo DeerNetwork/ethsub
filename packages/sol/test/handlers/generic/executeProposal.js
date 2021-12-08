@@ -98,7 +98,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -112,7 +112,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -136,7 +136,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -149,7 +149,7 @@ contract("GenericHandler - [Execute Proposal]", async (accounts) => {
       expectedDepositNonce,
       resourceID,
       depositData,
-      { from: relayer2Address }
+      {from: relayer2Address}
     );
 
     const internalTx = await TruffleAssert.createTransactionResult(

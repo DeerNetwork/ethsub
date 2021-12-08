@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { Command } = require("commander");
+const {Command} = require("commander");
 const program = new Command();
 
 // Comands
-const { deploy, bridge, admin, erc20, erc721, asset } = require("./cmd/index");
+const {deploy, bridge, admin, erc20, erc721, asset} = require("./cmd/index");
 const constants = require("./constants");
 
 program.option("--url <value>", "URL to connect to", "http://localhost:8545");
@@ -35,7 +35,7 @@ const run = async () => {
   try {
     await program.parseAsync(process.argv);
   } catch (e) {
-    console.log({ e });
+    console.log({e});
     process.exit(1);
   }
 };

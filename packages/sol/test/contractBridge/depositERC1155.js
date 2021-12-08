@@ -65,7 +65,7 @@ contract("Bridge - [deposit - ERC1155]", async (accounts) => {
     await OriginERC1155MintableInstance.setApprovalForAll(
       OriginERC1155HandlerInstance.address,
       true,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERC1155DepositData(
@@ -142,7 +142,7 @@ contract("Bridge - [deposit - ERC1155]", async (accounts) => {
       destinationDomainID,
       resourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {
@@ -157,7 +157,7 @@ contract("Bridge - [deposit - ERC1155]", async (accounts) => {
       destinationDomainID,
       resourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     TruffleAssert.eventEmitted(depositTx, "Deposit", (event) => {

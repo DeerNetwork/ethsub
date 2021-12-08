@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Decimal } from "decimal.js";
+import {Decimal} from "decimal.js";
 import _ from "lodash";
 
 export async function sleep(timeMs: number) {

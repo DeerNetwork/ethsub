@@ -31,7 +31,7 @@ contract("Bridge - [admin]", async (accounts) => {
 
   const assertOnlyAdmin = (method, ...params) => {
     return TruffleAssert.reverts(
-      method(...params, { from: initialRelayers[1] }),
+      method(...params, {from: initialRelayers[1]}),
       "sender doesn't have admin role"
     );
   };

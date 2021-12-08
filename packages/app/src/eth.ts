@@ -1,6 +1,6 @@
-import { ethers, Wallet } from "ethers";
-import { Bridge } from "@ethsub/sol/build/ethers/Bridge";
-import { ERC20Handler } from "@ethsub/sol/build/ethers/ERC20Handler";
+import {ethers, Wallet} from "ethers";
+import {Bridge} from "@ethsub/sol/build/ethers/Bridge";
+import {ERC20Handler} from "@ethsub/sol/build/ethers/ERC20Handler";
 import {
   ServiceOption,
   InitOption,
@@ -8,8 +8,8 @@ import {
   STOP_KEY,
   createInitFn,
 } from "use-services";
-import { Service as StoreService } from "./store";
-import { exchangeAmount, sleep } from "./utils";
+import {Service as StoreService} from "./store";
+import {exchangeAmount, sleep} from "./utils";
 import {
   BridgeMsg,
   BridgeMsgErc20,
@@ -17,7 +17,7 @@ import {
   ResourceData,
   ResourceType,
 } from "./types";
-import { srvs } from "./services";
+import {srvs} from "./services";
 
 export type Option<S extends Service> = ServiceOption<Args, S>;
 
@@ -27,7 +27,7 @@ const EventSig = {
   Deposit: "Deposit(uint8,bytes32,uint64,address,bytes,bytes)",
 };
 
-const { BigNumber } = ethers;
+const {BigNumber} = ethers;
 
 const CONTRACT_PATH = "@ethsub/sol/build/contracts";
 
@@ -73,7 +73,7 @@ export class Service {
   }
 
   public async [INIT_KEY]() {
-    const { url, startBlock, privateKey, contracts } = this.args;
+    const {url, startBlock, privateKey, contracts} = this.args;
     this.provider = new ethers.providers.WebSocketProvider(url);
     this.wallet = new ethers.Wallet(privateKey, this.provider);
     this.bridge = new ethers.Contract(
@@ -129,8 +129,8 @@ export class Service {
   }
 
   private async writeChain(msg: BridgeMsg) {
-    const { source, nonce } = msg;
-    const logCtx = { source, nonce };
+    const {source, nonce} = msg;
+    const logCtx = {source, nonce};
     try {
       let proposalData: ProposalData;
       if (msg.type === ResourceType.ERC20) {
@@ -138,7 +138,7 @@ export class Service {
       } else {
         throw new Error(`Write eth throw unknown msg type ${msg.type}`);
       }
-      const { data, dataHash } = proposalData;
+      const {data, dataHash} = proposalData;
       let proposal = await this.getProposal(msg, dataHash);
       if (proposal._status === 3 || proposal._status === 4) {
         srvs.logger.info(`Proposal completed, skip voting`, logCtx);
@@ -211,9 +211,9 @@ export class Service {
       source,
       nonce,
       resource,
-      payload: { recipient, amount },
+      payload: {recipient, amount},
     } = msg;
-    srvs.logger.info(`Write erc20 propsoal`, { source, nonce });
+    srvs.logger.info(`Write erc20 propsoal`, {source, nonce});
     const realAmount = exchangeAmount(
       amount,
       resource.sub.decimals,
@@ -233,14 +233,14 @@ export class Service {
       ["address", "bytes"],
       [this.erc20Handler.address, data]
     );
-    return { data, dataHash };
+    return {data, dataHash};
   }
 
   private parseErc20(
     log: ethers.utils.LogDescription,
     resourceData: ResourceData
   ) {
-    const { data, destinationDomainID, depositNonce } = log.args;
+    const {data, destinationDomainID, depositNonce} = log.args;
     const amount = BigNumber.from(
       ethers.utils.stripZeros(data.slice(0, 66))
     ).toString();
@@ -251,7 +251,7 @@ export class Service {
       nonce: depositNonce.toNumber(),
       type: ResourceType.ERC20,
       resource: resourceData,
-      payload: { amount, recipient },
+      payload: {amount, recipient},
     };
     return msg;
   }
@@ -273,9 +273,9 @@ export class Service {
   }
 
   private async voteProposal(msg: BridgeMsg, data: string, dataHash: string) {
-    const { source, nonce, resource } = msg;
+    const {source, nonce, resource} = msg;
     const {
-      eth: { resourceId },
+      eth: {resourceId},
     } = resource;
     const tx = await this.bridge.voteProposal(source, nonce, resourceId, data, {
       gasLimit: this.args.gasLimit,
@@ -285,9 +285,9 @@ export class Service {
   }
 
   private async executeProposal(msg: BridgeMsg, data: string) {
-    const { source, nonce, resource } = msg;
+    const {source, nonce, resource} = msg;
     const {
-      eth: { resourceId },
+      eth: {resourceId},
     } = resource;
     const tx = await this.bridge.executeProposal(
       source,

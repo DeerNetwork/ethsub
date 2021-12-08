@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { cryptoWaitReady } = require("@polkadot/util-crypto");
-const { Keyring } = require("@polkadot/keyring");
-const { ApiPromise, WsProvider } = require("@polkadot/api");
-const { BN } = require("@polkadot/util");
-const { Command } = require("commander");
+const {cryptoWaitReady} = require("@polkadot/util-crypto");
+const {Keyring} = require("@polkadot/keyring");
+const {ApiPromise, WsProvider} = require("@polkadot/api");
+const {BN} = require("@polkadot/util");
+const {Command} = require("commander");
 
 const program = new Command()
   .arguments("<call> <callArgs...>")
@@ -62,7 +62,7 @@ async function main(call, callArgs, options) {
 
 async function createWallet(secret) {
   await cryptoWaitReady();
-  const keyring = new Keyring({ type: "sr25519" });
+  const keyring = new Keyring({type: "sr25519"});
   return keyring.addFromUri(secret);
 }
 
@@ -76,14 +76,14 @@ function retrivePart(scope, callParts) {
 
 async function sendTx(api, keyPair, tx) {
   return new Promise((resolve, reject) => {
-    tx.signAndSend(keyPair, ({ events = [], status }) => {
+    tx.signAndSend(keyPair, ({events = [], status}) => {
       if (status.isInvalid || status.isDropped || status.isUsurped) {
         reject(new Error(`${status.type} transaction.`));
       } else {
       }
 
       if (status.isInBlock) {
-        events.forEach(({ event: { data, method, section } }) => {
+        events.forEach(({event: {data, method, section}}) => {
           if (section === "system" && method === "ExtrinsicFailed") {
             const [dispatchError] = data;
             if (dispatchError.isModule) {

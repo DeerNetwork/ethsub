@@ -101,14 +101,14 @@ contract(
           expectedDepositNonce,
           resourceID,
           depositData,
-          { from: relayer }
+          {from: relayer}
         );
       executeProposal = (relayer) =>
         BridgeInstance.executeProposal(
           originDomainID,
           expectedDepositNonce,
           depositData,
-          { from: relayer }
+          {from: relayer}
         );
     });
 

@@ -107,7 +107,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
     await OriginERC20MintableInstance.approve(
       OriginERC20HandlerInstance.address,
       depositAmount,
-      { from: depositerAddress }
+      {from: depositerAddress}
     ),
       await OriginERC20MintableInstance.grantRole(
         await OriginERC20MintableInstance.MINTER_ROLE(),
@@ -200,7 +200,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         destinationDomainID,
         originResourceID,
         originDepositData,
-        { from: depositerAddress }
+        {from: depositerAddress}
       )
     );
 
@@ -211,7 +211,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         expectedDepositNonce,
         destinationResourceID,
         originDepositProposalData,
-        { from: destinationRelayer1Address }
+        {from: destinationRelayer1Address}
       )
     );
 
@@ -225,7 +225,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         expectedDepositNonce,
         destinationResourceID,
         originDepositProposalData,
-        { from: destinationRelayer2Address }
+        {from: destinationRelayer2Address}
       )
     );
 
@@ -256,7 +256,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
     await DestinationERC20MintableInstance.approve(
       DestinationERC20HandlerInstance.address,
       depositAmount,
-      { from: recipientAddress }
+      {from: recipientAddress}
     );
 
     // recipientAddress makes a deposit of the received depositAmount
@@ -265,7 +265,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         originDomainID,
         destinationResourceID,
         destinationDepositData,
-        { from: recipientAddress }
+        {from: recipientAddress}
       )
     );
 
@@ -282,7 +282,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         expectedDepositNonce,
         originResourceID,
         destinationDepositProposalData,
-        { from: originRelayer1Address }
+        {from: originRelayer1Address}
       )
     );
 
@@ -296,7 +296,7 @@ contract("E2E ERC20 - Two EVM Chains", async (accounts) => {
         expectedDepositNonce,
         originResourceID,
         destinationDepositProposalData,
-        { from: originRelayer2Address }
+        {from: originRelayer2Address}
       )
     );
 

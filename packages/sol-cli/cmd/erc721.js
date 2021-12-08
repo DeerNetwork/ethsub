@@ -1,8 +1,8 @@
 const ethers = require("ethers");
 const constants = require("../constants");
 
-const { Command } = require("commander");
-const { setupParentArgs, waitForTx, log } = require("./utils");
+const {Command} = require("commander");
+const {setupParentArgs, waitForTx, log} = require("./utils");
 
 const mintCmd = new Command("mint")
   .description("Mint tokens")
@@ -159,7 +159,7 @@ const depositCmd = new Command("deposit")
       args.dest, // destination chain id
       args.resourceId,
       data,
-      { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+      {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await waitForTx(args.provider, tx.hash);
   });

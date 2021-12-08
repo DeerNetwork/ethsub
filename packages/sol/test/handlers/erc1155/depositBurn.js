@@ -75,7 +75,7 @@ contract("ERC1155Handler - [Deposit Burn ERC1155]", async (accounts) => {
       ERC1155MintableInstance1.setApprovalForAll(
         ERC1155HandlerInstance.address,
         true,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       BridgeInstance.adminSetResource(
         ERC1155HandlerInstance.address,

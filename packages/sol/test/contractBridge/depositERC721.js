@@ -67,7 +67,7 @@ contract("Bridge - [deposit - ERC721]", async (accounts) => {
     await OriginERC721MintableInstance.approve(
       OriginERC721HandlerInstance.address,
       originChainTokenID,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERCDepositData(
@@ -102,7 +102,7 @@ contract("Bridge - [deposit - ERC721]", async (accounts) => {
       destinationDomainID,
       originResourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
   });
 
@@ -111,7 +111,7 @@ contract("Bridge - [deposit - ERC721]", async (accounts) => {
       destinationDomainID,
       originResourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     const depositCount = await BridgeInstance._depositCounts.call(
@@ -125,7 +125,7 @@ contract("Bridge - [deposit - ERC721]", async (accounts) => {
       destinationDomainID,
       originResourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     const tokenOwner = await OriginERC721MintableInstance.ownerOf(
@@ -149,7 +149,7 @@ contract("Bridge - [deposit - ERC721]", async (accounts) => {
       destinationDomainID,
       originResourceID,
       depositData,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     let expectedMetaData = Ethers.utils.hexlify(

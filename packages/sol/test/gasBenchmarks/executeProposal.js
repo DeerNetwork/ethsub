@@ -66,7 +66,7 @@ contract("Gas Benchmark - [Execute Proposal]", async (accounts) => {
       depositNonce,
       resourceID,
       depositData,
-      { from: relayerAddress }
+      {from: relayerAddress}
     );
   const execute = (depositNonce, depositData, resourceID) =>
     BridgeInstance.executeProposal(
@@ -208,17 +208,17 @@ contract("Gas Benchmark - [Execute Proposal]", async (accounts) => {
       ERC20MintableInstance.approve(
         ERC20HandlerInstance.address,
         erc20TokenAmount,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       ERC721MintableInstance.approve(
         ERC721HandlerInstance.address,
         erc721TokenID,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       ERC1155MintableInstance.setApprovalForAll(
         ERC1155HandlerInstance.address,
         true,
-        { from: depositerAddress }
+        {from: depositerAddress}
       ),
       BridgeInstance.adminSetResource(
         ERC20HandlerInstance.address,

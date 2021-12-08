@@ -71,7 +71,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
     await ERC20MintableInstance.approve(
       ERC20HandlerInstance.address,
       depositAmount,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERCDepositData(
@@ -98,7 +98,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -108,7 +108,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -125,7 +125,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         depositProposalData,
         resourceID,
         revertOnFail,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -148,7 +148,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -157,7 +157,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
       expectedDepositNonce,
       resourceID,
       depositProposalData,
-      { from: relayer2Address }
+      {from: relayer2Address}
     );
 
     TruffleAssert.eventEmitted(
@@ -191,7 +191,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -202,7 +202,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -212,7 +212,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       ),
       "Something bad happened"
     );
@@ -225,7 +225,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -237,7 +237,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
@@ -250,7 +250,7 @@ contract("Bridge - [execute - FailedHandlerExecution]", async (accounts) => {
       expectedDepositNonce,
       resourceID,
       depositProposalData,
-      { from: relayer2Address }
+      {from: relayer2Address}
     );
 
     TruffleAssert.eventEmitted(voteWithExecuteTx, "ProposalEvent", (event) => {

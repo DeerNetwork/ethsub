@@ -78,7 +78,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
     });
@@ -90,7 +90,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: depositerAddress }
+          {from: depositerAddress}
         )
       );
     });
@@ -102,7 +102,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
 
@@ -112,7 +112,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
     });
@@ -139,7 +139,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
 
       const depositProposal = await BridgeInstance.getProposal(
@@ -159,7 +159,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
       const hasVoted = await BridgeInstance._hasVotedOnProposal.call(
         Helpers.nonceAndId(expectedDepositNonce, destinationDomainID),
@@ -175,7 +175,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
 
       TruffleAssert.eventEmitted(proposalTx, "ProposalEvent", (event) => {
@@ -258,7 +258,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
     });
@@ -270,7 +270,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: depositerAddress }
+          {from: depositerAddress}
         )
       );
     });
@@ -282,7 +282,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
 
@@ -292,7 +292,7 @@ contract(
           expectedDepositNonce,
           resourceID,
           data,
-          { from: originChainRelayerAddress }
+          {from: originChainRelayerAddress}
         )
       );
     });
@@ -309,7 +309,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
 
       const depositProposal = await BridgeInstance.getProposal(
@@ -329,7 +329,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
       const hasVoted = await BridgeInstance._hasVotedOnProposal.call(
         Helpers.nonceAndId(expectedDepositNonce, destinationDomainID),
@@ -345,7 +345,7 @@ contract(
         expectedDepositNonce,
         resourceID,
         data,
-        { from: originChainRelayerAddress }
+        {from: originChainRelayerAddress}
       );
 
       TruffleAssert.eventEmitted(proposalTx, "ProposalEvent", (event) => {

@@ -1,7 +1,7 @@
 const ethers = require("ethers");
-const { Command } = require("commander");
+const {Command} = require("commander");
 
-const { setupParentArgs, log } = require("./utils");
+const {setupParentArgs, log} = require("./utils");
 
 const constants = require("../constants");
 

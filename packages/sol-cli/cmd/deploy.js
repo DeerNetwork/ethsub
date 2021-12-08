@@ -1,7 +1,7 @@
 const ethers = require("ethers");
-const { Command } = require("commander");
+const {Command} = require("commander");
 const constants = require("../constants");
-const { setupParentArgs, splitCommaList, isValidAddress } = require("./utils");
+const {setupParentArgs, splitCommaList, isValidAddress} = require("./utils");
 
 const deployCmd = new Command("deploy")
   .description("Deploys contracts via RPC")
@@ -197,7 +197,7 @@ async function deployBridgeContract(args) {
     args.relayerThreshold,
     ethers.utils.parseEther(args.fee.toString()),
     args.expiry,
-    { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+    {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
   );
   await contract.deployed();
   args.bridgeAddress = contract.address;
@@ -214,7 +214,7 @@ async function deployERC20(args) {
     args.erc20Name,
     args.erc20Symbol,
     args.erc20Decimals,
-    { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+    {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
   );
   await contract.deployed();
   args.erc20Contract = contract.address;
@@ -252,7 +252,7 @@ async function deployERC721(args) {
     args.erc721Name,
     args.erc721Symbol,
     args.erc721BaseUri,
-    { gasPrice: args.gasPrice, gasLimit: args.gasLimit }
+    {gasPrice: args.gasPrice, gasLimit: args.gasLimit}
   );
   await contract.deployed();
   args.erc721Contract = contract.address;

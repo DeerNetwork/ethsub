@@ -5,8 +5,8 @@ import * as Echo from "@use-services/echo";
 import * as Store from "./store";
 import * as Eth from "./eth";
 import * as Sub from "./sub";
-import { mergeJson } from "./utils";
-import { ResourceData, ResourceType } from "./types";
+import {mergeJson} from "./utils";
+import {ResourceData, ResourceType} from "./types";
 
 const settings = {
   app: "ethsub",
@@ -80,5 +80,5 @@ const options = {
 
 mergeJson(options, path.resolve(settings.baseDir, "config.json"));
 
-const { srvs, init } = useServices(settings.app, options);
-export { srvs, init };
+const {srvs, init} = useServices(settings.app, options);
+export {srvs, init};

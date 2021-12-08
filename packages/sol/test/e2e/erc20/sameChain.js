@@ -71,7 +71,7 @@ contract("E2E ERC20 - Same Chain", async (accounts) => {
     await ERC20MintableInstance.approve(
       ERC20HandlerInstance.address,
       depositAmount,
-      { from: depositerAddress }
+      {from: depositerAddress}
     );
 
     depositData = Helpers.createERCDepositData(
@@ -125,7 +125,7 @@ contract("E2E ERC20 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer1Address }
+        {from: relayer1Address}
       )
     );
 
@@ -139,7 +139,7 @@ contract("E2E ERC20 - Same Chain", async (accounts) => {
         expectedDepositNonce,
         resourceID,
         depositProposalData,
-        { from: relayer2Address }
+        {from: relayer2Address}
       )
     );
 
