@@ -52,7 +52,7 @@ export interface Args {
 export class Service {
   public chainId: number;
 
-  private provider: ethers.providers.WebSocketProvider;
+  private provider: ethers.providers.Provider;
   private args: Args;
   private latestBlockNum: number;
   private currentBlockNum: number;
@@ -266,7 +266,11 @@ export class Service {
     try {
       await tx.wait(this.args.confirmBlocks);
     } catch (err) {
-      throw new Error(`Transaction ${tx.hash} throw`);
+      const reason = await this.revertReason(tx);
+      if (/proposal already executed\/cancelled/.test(reason)) {
+        return;
+      }
+      throw new Error(`Transaction ${tx.hash} throws ${reason}`);
     }
   }
 
@@ -315,6 +319,18 @@ export class Service {
 
   private idAndNonce(msg: BridgeMsg) {
     return (msg.nonce << 8) + msg.source;
+  }
+
+  private async revertReason(tx: ethers.ContractTransaction) {
+    try {
+      if (tx.maxFeePerGas) delete tx.gasPrice;
+      const code = await this.provider.call(tx, tx.blockNumber);
+      return ethers.utils.toUtf8String("0x" + code.substr(138));
+    } catch (err) {
+      let reason = err.error?.message;
+      if (reason) reason = reason.replace("execution reverted: ", "");
+      return reason;
+    }
   }
 }
 

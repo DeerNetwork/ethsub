@@ -138,6 +138,9 @@ export class Service {
       srvs.logger.info(`Proposal acknowledge`, logCtx);
       return true;
     } catch (err) {
+      if (/bridge\.ProposalAlreadyComplete/.test(err.message)) {
+        return true;
+      }
       srvs.logger.error(err, logCtx);
       return false;
     }

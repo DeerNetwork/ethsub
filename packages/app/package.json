@@ -1,6 +1,6 @@
 {
   "name": "ethsub",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A bridge between ethereum and substrate",
   "keywords": [
     "etherum",
@@ -17,10 +17,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/ethsub/ethsub",
+  "homepage": "https://github.com/DeerNetwork/ethsub",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ethsub/ethsub.git",
+    "url": "https://github.com/DeerNetwork/ethsub.git",
     "directory": "packages/app"
   },
   "scripts": {
