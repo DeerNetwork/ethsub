@@ -1,6 +1,6 @@
 {
   "name": "ethsub",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A bridge between ethereum and substrate",
   "keywords": [
     "etherum",

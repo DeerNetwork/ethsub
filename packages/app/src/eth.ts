@@ -59,7 +59,6 @@ export class Service {
   private wallet: Wallet;
   private store: StoreService;
   private bridge: Bridge;
-  private gasOpts: Partial<ethers.providers.FeeData>;
   private erc20Handler: ERC20Handler;
   private destoryed = false;
 
@@ -74,7 +73,7 @@ export class Service {
 
   public async [INIT_KEY]() {
     const {url, startBlock, privateKey, contracts} = this.args;
-    this.provider = new ethers.providers.WebSocketProvider(url);
+    this.provider = new ethers.providers.StaticJsonRpcProvider(url);
     this.wallet = new ethers.Wallet(privateKey, this.provider);
     this.bridge = new ethers.Contract(
       contracts.bridge,
@@ -173,15 +172,8 @@ export class Service {
       const latestBlockNum = await this.provider.getBlockNumber();
       if (latestBlockNum > this.latestBlockNum) {
         this.latestBlockNum = latestBlockNum;
-        const {gasPrice, maxFeePerGas, maxPriorityFeePerGas} =
-          await this.provider.getFeeData();
-        if (maxFeePerGas) {
-          this.gasOpts = {maxFeePerGas, maxPriorityFeePerGas};
-        } else {
-          this.gasOpts = {gasPrice};
-        }
       } else {
-        await sleep(2500);
+        await sleep(2999);
       }
     }
   }
@@ -289,7 +281,7 @@ export class Service {
     } = resource;
     const tx = await this.bridge.voteProposal(source, nonce, resourceId, data, {
       gasLimit: this.args.gasLimit,
-      ...this.gasOpts,
+      ...(await this.getGasOpts()),
     });
     await this.waitTx(tx);
   }
@@ -307,7 +299,7 @@ export class Service {
       true,
       {
         gasLimit: this.args.gasLimit,
-        ...this.gasOpts,
+        ...(await this.getGasOpts()),
       }
     );
     await this.waitTx(tx);
@@ -319,6 +311,16 @@ export class Service {
 
   private idAndNonce(msg: BridgeMsg) {
     return (msg.nonce << 8) + msg.source;
+  }
+
+  private async getGasOpts(): Promise<Partial<ethers.providers.FeeData>> {
+    const {gasPrice, maxFeePerGas, maxPriorityFeePerGas} =
+      await this.provider.getFeeData();
+    if (maxFeePerGas) {
+      return {maxFeePerGas, maxPriorityFeePerGas};
+    } else {
+      return {gasPrice};
+    }
   }
 
   private async revertReason(tx: ethers.ContractTransaction) {

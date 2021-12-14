@@ -54,7 +54,7 @@ const options = {
     deps: ["store"],
     args: {
       chainId: 0,
-      url: "ws://localhost:8545",
+      url: "http://localhost:8545",
       confirmBlocks: 6,
       startBlock: 0,
       privateKey:
