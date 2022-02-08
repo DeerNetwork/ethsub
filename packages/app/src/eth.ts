@@ -100,13 +100,17 @@ export class Service {
     this.subscribeLatestBlock();
     while (true) {
       if (this.destoryed) break;
-      const confirmBlockNum = this.latestBlockNum - this.args.confirmBlocks;
-      if (this.currentBlockNum >= confirmBlockNum) {
-        await sleep(2500);
-        continue;
+      try {
+        const confirmBlockNum = this.latestBlockNum - this.args.confirmBlocks;
+        if (this.currentBlockNum >= confirmBlockNum) {
+          await sleep(2500);
+          continue;
+        }
+        await this.parseBlock();
+        await this.store.storeEthBlockNum(this.currentBlockNum);
+      } catch(err) {
+        srvs.logger.error(err, { topic: "eth.pullBLocks" });
       }
-      await this.parseBlock();
-      await this.store.storeEthBlockNum(this.currentBlockNum);
     }
   }
 
@@ -176,7 +180,9 @@ export class Service {
         } else {
           await sleep(2999);
         }
-      } catch {}
+      } catch(err) {
+        srvs.logger.error(err, { topic: "eth.subscribeLatestBlock" });
+      }
     }
   }
 
