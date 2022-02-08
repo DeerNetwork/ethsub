@@ -169,12 +169,14 @@ export class Service {
   private async subscribeLatestBlock() {
     while (true) {
       if (this.destoryed) break;
-      const latestBlockNum = await this.provider.getBlockNumber();
-      if (latestBlockNum > this.latestBlockNum) {
-        this.latestBlockNum = latestBlockNum;
-      } else {
-        await sleep(2999);
-      }
+      try {
+        const latestBlockNum = await this.provider.getBlockNumber();
+        if (latestBlockNum > this.latestBlockNum) {
+          this.latestBlockNum = latestBlockNum;
+        } else {
+          await sleep(2999);
+        }
+      } catch {}
     }
   }
 
